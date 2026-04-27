@@ -1,0 +1,101 @@
+
+📂 FitEating 프로젝트 구조
+# 아래와 같은 파일구조로 시작
+backend/
+├── venv/                 # 이미 만드신 가상환경
+├── app/
+│   ├── main.py           # 실행 시작점
+│   ├── api/
+│   │   └── v1/
+│   │       ├── api.py    # 라우터 통합
+│   │       └── endpoints/
+│   │           ├── exercise.py  # Mediapipe 관련 로직용
+│   │           └── diet.py      # 식단 관련 로직용
+│   ├── core/             # 설정 (DB 주소 등)
+│   ├── models/           # DB 테이블 (SQLAlchemy)
+│   └── schemas/          # 데이터 검증 (Pydantic)
+└── requirements.txt
+
+frontend/
+├── node_modules/       # 설치된 라이브러리들 (자동 생성)
+├── public/             # 소리 파일(.mp3), 가이드 영상 등 정적 파일
+│   └── sounds/         # correct.mp3 등 알림음
+├── src/                # 실제 개발 소스 코드
+│   ├── assets/         # 로고 등 이미지
+│   ├── components/     # 공용 UI (Layout.jsx, Navbar.jsx 등)
+│   ├── features/       # 핵심 기능 (여기에 ExerciseAnalyzer 등이 들어감)
+│   │   ├── exercise/   # 운동 관련
+│   │   │   └── ExerciseAnalyzer.jsx 
+│   │   ├── diet/       # 식단 관련
+│   │   └── blog/       # 블로그 관련
+│   ├── pages/
+│   │   ├── BlogPage.jsx
+│   │   ├── FoodCalculator.jsx
+│   │   └── Settings.jsx              <-- 나머지 페이지들
+│   ├── App.jsx         # 메인 라우팅 설정
+│   └── main.jsx        # 리액트 시작점
+├── .gitignore          # 깃 제외 목록
+├── index.html          # 메인 HTML 파일
+├── package.json        # 설치된 라이브러리 목록/설정
+└── vite.config.js      # Vite 설정 파일
+
+
+================================================================================================
+
+# 프로젝트가 커지면 아래와 같이 확장
+1. Backend (FastAPI: Layered Architecture)
+FastAPI는 파일 구조에 제약이 없지만, 엔드포인트와 비즈니스 로직을 분리하는 것이 핵심입니다.
+
+backend/
+├── app/
+│   ├── api/                # 라우터 (V1, V2 등 버전 관리)
+│   │   └── v1/
+│   │       ├── api.py      # 모든 라우터 통합
+│   │       └── endpoints/  # 각 기능별 엔드포인트 (diet, exercise 등)
+│   ├── core/               # 전역 설정 (config, security, logging)
+│   ├── crud/               # DB CRUD 로직 (Create, Read, Update, Delete)
+│   ├── models/             # DB Table 정의 (SQLAlchemy, Tortoise 등)
+│   ├── schemas/            # Pydantic 모델 (입출력 검증)
+│   ├── services/           # [중요] 비즈니스 로직 (외부 API 연동, 복잡한 계산 등)
+│   ├── db/                 # session 설정 및 base 클래스
+│   └── main.py             # FastAPI 앱 초기화 및 실행
+├── tests/                  # Pytest 코드
+├── .env                    # 환경 변수
+├── alembic/                # DB 마이그레이션 관리 (선택)
+└── requirements.txt
+
+2. Frontend (React: Feature-based Structure)
+요즘 React는 단순히 components, pages로 나누기보다 기능(Feature) 단위로 묶는 Bulletproof React 스타일이 대세입니다.
+
+frontend/
+├── src/
+│   ├── assets/             # 이미지, 폰트 등 정적 파일
+│   ├── components/         # 여러 곳에서 재사용되는 공용 UI (Button, Input)
+│   ├── features/           # [핵심] 도메인별 기능 모듈
+│   │   ├── auth/           # 인증 관련 (Login, Signup, hooks, api)
+│   │   └── diet/           # 식단 관련 (DietList, DietForm, dietSlice)
+│   ├── hooks/              # 전역 커스텀 훅
+│   ├── pages/              # 라우팅 경로에 대응하는 페이지 컴포넌트
+│   ├── services/           # Axios/Fetch 인스턴스 및 전역 API 통신
+│   ├── store/              # Redux, Zustand 등 상태 관리 설정
+│   ├── utils/              # 포맷터, 공통 함수
+│   └── App.tsx             # 루트 컴포넌트
+├── public/
+├── .env
+└── package.json
+
+
+================================================================================================
+
+
+백엔드 코드 백업: * backend/app/services/exercise_service.py
+
+backend/app/api/v1/endpoints/exercise.py
+
+backend/app/main.py
+
+환경 설정 메모: * scikit-learn==1.3.0
+
+numpy==1.24.3
+
+opencv-python<4.9
