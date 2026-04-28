@@ -4,18 +4,21 @@
 [Step 1] 백엔드 가상환경 만들기
 vscode에서 프로젝트 폴더를 열고 터미널에서 backend 폴더로 이동하여 명령어를 실행해야 한다.
 cd backend
+# 호환성문제로 파이썬 3.10 사용
 python3.10 -m venv venv
 가상환경 켜기: .\venv\Scripts\activate (윈도우 전용)
 가상환경 켜기: source venv/bin/activate (맥 전용)
+# vscode의 오른쪽 아래 2곳의 버전이 3.10인지 꼭 확인, 틀리면 수동으로 맞춰야 함
 패키지 한방 설치: pip install -r requirements.txt
 패키지 저장할때는 pip freeze > requirements.txt
-백엔드는 프론드엔드와 다르게 수동으로 해줘야하고 저장 안했다면 일일이 에러에 따라 설치해줘야 한다.
-pip install fastapi uvicorn ultralytics torch torchvision opencv-python-headless
+# 백엔드는 프론드엔드와 다르게 수동으로 해줘야하고 저장 안했다면 일일이 에러에 따라 설치해줘야 한다.
+# 예를들면 pip install fastapi uvicorn ultralytics torch torchvision opencv-python-headless
 서버 실행: uvicorn app.main:app --reload --port 8000
 서버 실행(외부접속 필요시): uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 [Step 2] 프론트엔드 (Frontend - Vite 기준)
 꼭 터미널을 하나더 만들고 꼭 frontend 폴더로 이동하여 명령어를 실행해야 한다.
+cd frontend
 패키지 설치: npm install
 npm install 를 실행하면 추가한 패키지들도 node_modules 에 같이 설치해 준다.
 package.json, package-lock.json 파일이 백엔드의 requirements.txt 를 대신한다.

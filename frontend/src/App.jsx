@@ -71,7 +71,7 @@ const App = () => {
                 {/* 운동 선택 그리드 내부의 스쿼트 버튼 */}
                 <div 
                   onClick={() => setSelectedExercise("SQUAT")}
-                  className="relative aspect-square bg-[#16161a] border border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center cursor-pointer hover:border-blue-500/50 transition-all shadow-2xl group overflow-hidden"
+                  className="relative aspect-square bg-[#16161a] border border-white/10 rounded-[0.5rem] flex flex-col items-center justify-center cursor-pointer hover:border-blue-500/50 transition-all shadow-2xl group overflow-hidden"
                 >
                   {/* [배경 이미지 추가] */}
                   {/* <img 
