@@ -1,0 +1,19 @@
+# 100g 당 기준 칼로리 테이블 (예시)
+FOOD_NUTRITION_DB = {
+    0: {"name": "쌀밥", "kcal": 143},
+    1: {"name": "잡곡밥", "kcal": 160},
+    2: {"name": "김치볶음밥", "kcal": 190},
+    12: {"name": "김치찌개", "kcal": 80},
+    50: {"name": "제육볶음", "kcal": 220},
+    # ... 149번까지 채우기
+}
+
+# 분석 로직 내부에서 적용
+class_idx = idx.item()
+food_info = FOOD_NUTRITION_DB.get(class_idx, {"name": f"알 수 없는 음식({class_idx})", "kcal": 150})
+
+final_detected_list.append({
+    "food_name": food_info["name"],
+    "calories": food_info["kcal"],  # 이 값이 리액트로 전달됨
+    "confidence": round(conf.item(), 2)
+})
