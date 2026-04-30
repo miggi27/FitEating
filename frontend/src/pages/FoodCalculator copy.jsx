@@ -20,7 +20,7 @@ const FoodCalculator = () => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post(`http://${window.location.hostname}:8000/api/v1/diet/analyze`, formData);
+      const res = await axios.post(`http://${window.location.hostname}:8001/api/v1/diet/analyze`, formData);
       setResult(res.data);
     } catch (err) {
       console.error("분석 실패", err);

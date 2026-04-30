@@ -41,7 +41,7 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
     if (results.poseLandmarks) {
       const landmarks = results.poseLandmarks.flatMap((l) => [l.x, l.y, l.z, l.visibility]);
       try {
-        const res = await axios.post(`http://${window.location.hostname}:8000/api/v1/exercise/analyze`, {
+        const res = await axios.post(`http://${window.location.hostname}:8001/api/v1/exercise/analyze`, {
           landmarks, exercise_type: exercise
         });
         

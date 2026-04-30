@@ -66,7 +66,7 @@ const App = () => {
   const resetServerCounter = async () => {
     try {
       const host = window.location.hostname;
-      await axios.post(`http://${host}:8000/api/v1/exercise/reset`);
+      await axios.post(`http://${host}:8001/api/v1/exercise/reset`);
     } catch (err) { console.error("서버 리셋 실패:", err); }
   };
 

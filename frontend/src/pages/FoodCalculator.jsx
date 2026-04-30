@@ -10,26 +10,37 @@ const FoodCalculator = () => {
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // 초기화 및 미리보기 세팅
     setPreview(URL.createObjectURL(file));
     setLoading(true);
     setFoods([]);
+
     const formData = new FormData();
     formData.append("file", file);
+
     try {
       const host = window.location.hostname;
-      const res = await axios.post(`http://${host}:8000/api/v1/diet/analyze`, formData);
-      const rawData = res.data || [];
-      const detectedData = Array.isArray(rawData) ? rawData : [rawData];
+      // 백엔드 API 호출
+      const res = await axios.post(`http://${host}:8001/api/v1/diet/analyze`, formData);
+      
+      // 백엔드에서 받은 데이터 (결과가 없으면 빈 배열)
+      const detectedData = Array.isArray(res.data) ? res.data : [];
+
+      // 리액트 상태에 맞게 데이터 가공
       const formattedFoods = detectedData.map((item, index) => ({
-        id: Date.now() + index,
+        id: Date.now() + index + Math.random(), // 고유 ID 생성
         name: item.food_name || "알 수 없는 음식",
-        weight: 100, 
+        weight: 50, // 기본 중량을 50g으로 세팅하여 칼로리 폭탄 방지
         kcalPer100g: item.calories || 0,
         feedback: item.feedback || "분석된 영양 정보를 확인하세요."
       }));
+
       setFoods(formattedFoods);
+
     } catch (err) {
-      alert("분석 오류가 발생했습니다.");
+      console.error("Analysis Error:", err);
+      alert("분석 오류가 발생했습니다. 서버 상태를 확인해주세요.");
     } finally {
       setLoading(false);
     }
@@ -43,13 +54,16 @@ const FoodCalculator = () => {
     setFoods(prev => prev.filter(f => f.id !== id));
   };
 
-  const totalKcal = foods.reduce((sum, f) => sum + (Number(f.kcalPer100g) * Number(f.weight) / 100), 0);
+  // 총 칼로리 계산 로직
+  const totalKcal = foods.reduce((sum, f) => {
+    const kcal = (Number(f.kcalPer100g) * Number(f.weight)) / 100;
+    return sum + (isNaN(kcal) ? 0 : kcal);
+  }, 0);
 
   return (
-    /* 💡 전체 페이지가 스크롤 되도록 설정, 내부 개별 스크롤은 금지 */
     <div className="min-h-screen bg-[#0c0c0e] text-white p-4 pb-20 overflow-x-hidden">
       
-      {/* 1. 이미지 프리뷰 */}
+      {/* 1. 이미지 프리뷰 섹션 */}
       <div className="relative w-full aspect-video bg-[#16161a] rounded-3xl border border-white/5 overflow-hidden shadow-2xl mb-6">
         {preview ? (
           <img src={preview} alt="food" className="w-full h-full object-cover" />
@@ -59,19 +73,21 @@ const FoodCalculator = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Ready to scan</p>
           </div>
         )}
+        
         {loading && (
           <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-50">
             <Loader2 className="animate-spin text-blue-500 mb-2" size={32} />
             <p className="text-[10px] font-black tracking-widest">ANALYZING...</p>
           </div>
         )}
+
         <label className="absolute bottom-4 right-4 p-4 bg-blue-600 rounded-2xl cursor-pointer shadow-2xl active:scale-90 transition-transform">
           <Camera size={20} className="text-white" />
           <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
         </label>
       </div>
 
-      {/* 2. 음식 리스트 영역 (스크롤 없이 꽉 채움) */}
+      {/* 2. 음식 리스트 영역 */}
       <div className="mb-6">
         {foods.length > 0 ? (
           <div className="bg-[#16161a] rounded-3xl border border-white/5 overflow-hidden">
@@ -80,7 +96,6 @@ const FoodCalculator = () => {
               <span className="w-12 text-center mr-2">GRAM</span>
               <span className="w-12 text-right mr-8">KCAL</span>
             </div>
-            {/* 💡 max-h를 빼서 리스트가 길어지면 길어지는 대로 박스가 늘어나게 함 */}
             <div>
               {foods.map((food) => (
                 <div key={food.id} className="flex items-center px-5 py-4 border-b border-white/5 last:border-0">
@@ -110,29 +125,46 @@ const FoodCalculator = () => {
         )}
       </div>
 
-      {/* 3. 하단 섹션 (리스트 바로 뒤에 자연스럽게 배치) */}
+      {/* 3. 총합 및 피드백 섹션 */}
       {foods.length > 0 && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mt-4">
           {/* 총 칼로리 카드 */}
-          <div className="bg-blue-600 p-6 rounded-[2rem] shadow-2xl relative overflow-hidden shrink-0">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] shadow-2xl relative overflow-hidden">
             <div className="relative z-10">
-              <p className="text-[10px] font-black text-blue-100 uppercase opacity-70 mb-1">Total Kcal</p>
+              <p className="text-[10px] font-black text-blue-100 uppercase opacity-70 mb-1">Total Intake</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-5xl font-black italic tracking-tighter">{Math.round(totalKcal)}</span>
                 <span className="text-lg font-bold opacity-80">kcal</span>
               </div>
             </div>
-            <Calculator size={60} className="absolute -bottom-2 -right-2 opacity-10" />
+            <Calculator size={80} className="absolute -bottom-4 -right-4 opacity-20 rotate-12" />
           </div>
 
-          {/* AI 피드백 박스 */}
-          <div className="bg-[#16161a] p-5 rounded-[2rem] border border-white/5 flex gap-4 shadow-xl">
-            <CheckCircle size={20} className="text-blue-500 shrink-0 mt-1" />
-            <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Dietary Feedback</p>
-              <p className="text-[14px] text-slate-300 leading-snug font-medium break-keep">
-                {foods[0]?.feedback}
-              </p>
+          {/* 운동 맞춤형 AI 피드백 박스 */}
+          <div className="bg-[#1b1b1f] p-6 rounded-[2.5rem] border border-white/5 shadow-xl">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-500/10 rounded-2xl">
+                <CheckCircle size={24} className="text-blue-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Workout Strategy</p>
+                <h4 className="text-[16px] font-bold text-white mb-2">
+                  {foods[0]?.name} 식단 분석
+                </h4>
+                <p className="text-[14px] text-slate-300 leading-relaxed font-medium break-keep">
+                  {/* 1. 개별 음식 피드백 노출 */}
+                  {foods[0]?.feedback}
+                </p>
+                
+                {/* 2. 전체 칼로리 기반 운동 조언 추가 */}
+                <div className="mt-4 pt-4 border-t border-white/5">
+                  <p className="text-[13px] text-slate-400 italic">
+                    {totalKcal > 1000 
+                      ? "⚠️ 칼로리가 높습니다! 오늘 '스쿼트' 자세 교정 모드로 평소보다 2세트 더 진행하는 것을 추천합니다." 
+                      : "✅ 적정 칼로리입니다. 지금의 식단을 유지하며 근력 운동 자세에 집중해보세요!"}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
