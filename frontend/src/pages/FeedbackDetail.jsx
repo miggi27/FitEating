@@ -1,122 +1,103 @@
 import React from 'react';
-import { ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis } from 'recharts';
-import { Save, RotateCcw, Award, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { Save, RotateCcw, Award, CheckCircle2, AlertCircle, Activity, Target, ShieldCheck } from 'lucide-react';
 
 const FeedbackDetail = ({ result, exerciseName, theme, onReset, onSaveToBlog }) => {
   const isDark = theme === 'dark';
   const s = {
-    card: isDark ? 'bg-[#16161a] border-white/5' : 'bg-white border-slate-200',
+    card: isDark ? 'bg-[#1c1c21] border-white/5' : 'bg-white border-slate-200',
     text: isDark ? 'text-slate-200' : 'text-slate-900',
     subText: isDark ? 'text-slate-500' : 'text-slate-500',
     accent: 'text-blue-500'
   };
 
-  // 서버에서 온 데이터를 차트용으로 변환
   const radarData = [
-    { subject: 'Stability', A: result.cat_scores?.Stability || 0 },
-    { subject: 'ROM', A: result.cat_scores?.ROM || 0 },
-    { subject: 'Quality', A: result.cat_scores?.['Movement Quality'] || 0 },
-    { subject: 'Posture', A: result.cat_scores?.Posture || 0 },
-    { subject: 'Core', A: result.cat_scores?.Core || 0 },
+    { subject: '안정성', A: result.cat_scores?.Stability || 0 },
+    { subject: '가동범위', A: result.cat_scores?.ROM || 0 },
+    { subject: '동작품질', A: result.cat_scores?.['Movement Quality'] || 0 },
+    { subject: '자세', A: result.cat_scores?.Posture || 0 },
+    { subject: '코어', A: result.cat_scores?.Core || 0 },
   ];
 
   return (
-    <div className="flex flex-col space-y-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-
-      {/* 📸 분석 캡쳐 이미지 추가 */}
-      {result.capture_url && (
-        <div className={`mt-6 overflow-hidden rounded-3xl border ${theme === 'dark' ? 'border-white/10' : 'border-slate-200'} shadow-2xl bg-black`}>
-          <div className="p-2 bg-slate-800/50 text-[10px] uppercase font-bold tracking-widest text-slate-400 px-4">
-            Error Capture Moment
-          </div>
-          <img 
-            src={result.capture_url} 
-            alt="Exercise Error Capture" 
-            /* 💡 object-contain으로 변경하여 이미지가 비율에 맞게 전체가 다 나오도록 합니다 */
-            className="w-full h-auto max-h-[500px] object-contain mx-auto" 
-          />
-        </div>
-      )}
+    <div className="flex flex-col space-y-6 pb-20 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
       
-      {/* 1. 상단 스코어 섹션 */}
-      <div className={`p-8 rounded-3xl border ${s.card} text-center shadow-2xl`}>
+      {/* 1. 상단 요약 리포트 */}
+      <div className={`p-10 rounded-[40px] border ${s.card} text-center shadow-2xl relative overflow-hidden`}>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
         <div className="flex justify-center mb-4">
-          <div className="relative">
-            <Award size={80} className={s.accent} />
-            <div className="absolute inset-0 flex items-center justify-center mt-2">
-              <span className="text-2xl font-black text-white italic">{result.score || 0}</span>
-            </div>
+          <div className="bg-blue-500/10 p-4 rounded-full">
+            <Award size={60} className={s.accent} />
           </div>
         </div>
-        <h2 className={`text-3xl font-black italic uppercase tracking-tighter ${s.text}`}>
-          {exerciseName} REPORT
+        <h2 className={`text-4xl font-black italic tracking-tighter ${s.text} mb-2`}>
+          {exerciseName} ANALYSIS
         </h2>
-        <p className={`${s.subText} text-sm mt-1`}>Top {result.top_pct || 0}% Lifter 수준입니다.</p>
-      </div>
-
-      {/* 2. 레이더 차트 섹션 */}
-      <div className={`p-4 rounded-3xl border ${s.card} flex flex-col items-center justify-center`}>
-        <h3 className={`text-xs font-bold uppercase tracking-widest mb-4 ${s.subText}`}>Performance Chart</h3>
-        <div className="w-full" style={{ height: '300px' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-              <PolarGrid stroke={isDark ? "#333" : "#ddd"} />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: isDark ? '#888' : '#444', fontSize: 12 }} />
-              <Radar
-                name="Score"
-                dataKey="A"
-                stroke="#3b82f6"
-                fill="#3b82f6"
-                fillOpacity={0.5}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
+        <div className="flex justify-center items-baseline gap-2">
+          <span className="text-6xl font-black text-blue-500 leading-none">{result.score || 0}</span>
+          <span className="text-xl font-bold text-slate-500">POINTS</span>
         </div>
+        <p className="mt-4 px-6 py-2 bg-blue-500/10 rounded-full inline-block text-blue-500 font-bold text-sm">
+          {result.overall}
+        </p>
       </div>
 
-      {/* 3. 텍스트 피드백 섹션 */}
-      <div className="space-y-4">
-        <div className={`p-6 rounded-3xl border ${s.card}`}>
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 size={20} className="text-green-500" />
-            <h4 className={`font-bold ${s.text}`}>종합 의견</h4>
+      {/* 2. 시각적 분석: 캡처 & 레이더 차트 */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* 운동 이름과 분석 캡처 - 어떤 운동인지 명확히 인지 */}
+        <div className={`p-2 rounded-[35px] border ${s.card} shadow-2xl overflow-hidden bg-black`}>
+          {/* 🔥 빨간 원이 포함된 캡처 사진 배치 */}
+          {result?.capture_url ? (
+            <img src={result.capture_url} alt="Analysis Result" className="w-full h-full object-contain" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-slate-500 italic">영상 분석 이미지를 생성 중입니다...</div>
+          )}
+        </div>
+
+        {/* 능력치 차트 */}
+        <div className={`p-6 rounded-[32px] border ${s.card} flex flex-col items-center justify-center min-h-[350px]`}>
+          <h3 className={`text-xs font-bold uppercase tracking-widest mb-4 ${s.subText}`}>Performance Chart</h3>
+          <div className="w-full h-[300px]"> 
+            {/* ResponsiveContainer 부모는 반드시 고정 높이가 있어야 합니다 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData}>
+                <PolarGrid stroke={isDark ? "#333" : "#ddd"} />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: isDark ? '#888' : '#444', fontSize: 12 }} />
+                <Radar name="Score" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.4} />
+              </RadarChart>
+            </ResponsiveContainer>
           </div>
-          <p className={`text-sm leading-relaxed ${s.text} opacity-80`}>
-            {result.overall || "분석 데이터를 불러오는 중입니다..."}
-          </p>
-        </div>
-
-        <div className={`p-6 rounded-3xl border ${s.card}`}>
-          <div className="flex items-center gap-2 mb-3">
-            <AlertCircle size={20} className="text-amber-500" />
-            <h4 className={`font-bold ${s.text}`}>카테고리별 분석</h4>
-          </div>
-          <ul className="space-y-3">
-            {result.cat_details && Object.entries(result.cat_details).map(([cat, msg]) => (
-              <li key={cat} className="flex flex-col gap-1 border-l-2 border-blue-500/30 pl-4">
-                <span className={`text-[10px] font-bold uppercase ${s.subText}`}>{cat}</span>
-                <span className={`text-sm ${s.text}`}>{msg}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
-      {/* 4. 하단 액션 버튼 (생략했던 부분 포함) */}
-      <div className="grid grid-cols-2 gap-4 pt-4">
-        <button 
-          onClick={onSaveToBlog}
-          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-600/20"
-        >
-          <Save size={18} />
-          블로그 저장
+      {/* 3. 전문적인 카테고리 상세 진단 (이 부분이 성실함의 핵심) */}
+      <div className={`p-8 rounded-[32px] border ${s.card}`}>
+        <div className="flex items-center gap-2 mb-6">
+          <ShieldCheck size={24} className="text-green-500" />
+          <h4 className={`text-xl font-bold ${s.text}`}>운동 품질 상세 진단</h4>
+        </div>
+        <div className="grid gap-4">
+          {result.cat_details && Object.entries(result.cat_details).map(([cat, msg]) => (
+            <div key={cat} className="group p-5 rounded-2xl bg-white/5 border border-transparent hover:border-blue-500/30 transition-all">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[11px] font-black uppercase tracking-wider text-blue-400">{cat}</span>
+                <span className="text-xs font-bold text-green-500">Excellent</span>
+              </div>
+              <p className={`text-sm leading-relaxed ${s.text} opacity-90`}>{msg}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. 하단 버튼 구역 */}
+      <div className="flex gap-4">
+        <button onClick={onReset} className={`flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl font-bold ${s.card} border ${s.text} transition-all active:scale-95 shadow-xl`}>
+          <RotateCcw size={20} />
+          다시 시작하기
         </button>
-        <button 
-          onClick={onReset}
-          className={`flex items-center justify-center gap-2 ${s.card} border ${s.text} font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-xl`}
-        >
-          <RotateCcw size={18} />
-          다시 하기
+        <button onClick={onSaveToBlog} className="flex-[1.5] flex items-center justify-center gap-2 py-5 rounded-2xl font-bold bg-blue-600 hover:bg-blue-700 text-white transition-all active:scale-95 shadow-lg shadow-blue-900/20">
+          <Save size={20} />
+          AI 리포트 블로그에 저장
         </button>
       </div>
     </div>

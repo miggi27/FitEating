@@ -23,4 +23,10 @@ cd frontend
 패키지 설치: npm install
 npm install 를 실행하면 추가한 패키지들도 node_modules 에 같이 설치해 준다.
 package.json, package-lock.json 파일이 백엔드의 requirements.txt 를 대신한다.
-서버 실행: npm run dev -- --host (외부 접속 허용 옵션)
+서버 실행: npm run dev
+서버 실행(외부접속 필요시): npm run dev -- --host
+
+
+0.0.0.0: "전 세계 누구나 들어와!" (매우 위험)
+192.168.x.x: "같은 와이파이 쓰는 사람만 들어와!" (공부용/테스트용 적당)
+127.0.0.1 또는 localhost: "나 혼자만 쓸 거야!" (가장 안전)

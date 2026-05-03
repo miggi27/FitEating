@@ -1,0 +1,2 @@
+// src/api/config.js
+export const API_BASE_URL = `http://${window.location.hostname}:8001/api/v1/exercise`;

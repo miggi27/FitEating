@@ -2,12 +2,12 @@
 📂 FitEating 프로젝트 구조
 # 아래와 같은 파일구조로 시작
 backend/
-├── venv/                 # 이미 만드신 가상환경
+├── venv/                 # 가상환경
 ├── app/
 │   ├── main.py           # 실행 시작점
 │   ├── api/
 │   │   └── v1/
-│   │       ├── api.py    # 라우터 통합
+│   │       ├── api.py    # 아직 없음
 │   │       └── endpoints/
 │   │           ├── exercise.py  # Mediapipe 관련 로직용
 │   │           └── diet.py      # 식단 관련 로직용
@@ -25,13 +25,17 @@ frontend/
 │   ├── components/     # 공용 UI (Layout.jsx, Navbar.jsx 등)
 │   ├── features/       # 핵심 기능 (여기에 ExerciseAnalyzer 등이 들어감)
 │   │   ├── exercise/   # 운동 관련
-│   │   │   └── ExerciseAnalyzer.jsx 
+│   │   │   └── ExerciseAnalyzer.jsx # 이게 왜 있는지 잘 모르겠음
 │   │   ├── diet/       # 식단 관련
 │   │   └── blog/       # 블로그 관련
 │   ├── pages/
-│   │   ├── BlogPage.jsx
-│   │   ├── FoodCalculator.jsx
-│   │   └── Settings.jsx              <-- 나머지 페이지들
+│   │   ├── Analysis.jsx     # 분석 페이지
+│   │   ├── BlogPage.jsx     # 블로그 페이지
+│   │   ├── DietPage.jsx     # 음식 페이지
+│   │   ├── ExercisePage.jsx # 운동 페이지
+│   │   ├── FeedbackDetail.jsx # 운동분석 상세페이지
+│   │   ├── FoodCalculator.jsx 
+│   │   └── Settings.jsx     # 설정 페이지
 │   ├── App.jsx         # 메인 라우팅 설정
 │   └── main.jsx        # 리액트 시작점
 ├── .gitignore          # 깃 제외 목록
