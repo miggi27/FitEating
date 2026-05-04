@@ -26,13 +26,6 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className={`fixed inset-0 ${s.bg} ${s.text} flex flex-col overflow-hidden`}>
-        {/* 공통 헤더 */}
-        {/* <header className={`h-16 flex items-center px-6 border-b ${s.border} ${s.header} backdrop-blur-md z-50 shadow-sm`}>
-          <h1 className={`text-xl font-black tracking-tighter ${s.accent} italic uppercase`}>
-            FIT-EATING
-          </h1>
-        </header> */}
-
         {/* 페이지 본문 영역 */}
         <main className="flex-1 relative overflow-hidden flex justify-center">
           <Routes>

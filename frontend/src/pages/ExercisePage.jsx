@@ -59,16 +59,25 @@ const ExercisePage = ({ theme }) => {
 
       <div className="flex-1 relative">
         {!selectedExercise ? (
-          /* [선택 창] */
-          <div className="h-full flex items-center justify-center p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
-              {["SQUAT", "DEAD", "BENCH"].map((ex) => (
-                <div key={ex} onClick={() => setSelectedExercise(ex)} className="relative aspect-square ${s.card} border ${s.border} rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:scale-[1.05] transition-all shadow-lg overflow-hidden group">
-                  {ex === "SQUAT" && <img src={squatImg} alt="squat" className="absolute inset-0 w-full h-full object-cover opacity-50 hover:opacity-80" />}
-                  <ScanLine size={48} className="text-blue-500 mb-4" />
-                  <span className="text-2xl text-white font-black text-slate-900 dark:text-white">{ex}</span>
-                </div>
-              ))}
+          /* [선택 창] - 수정된 구조 */
+          <div className="absolute inset-0 overflow-y-auto"> 
+            {/* items-center를 빼고 flex flex-col과 py-12(여백) 추가 */}
+            <div className="min-h-full flex flex-col items-center justify-start md:justify-center p-6 py-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+                {["SQUAT", "DEAD", "BENCH"].map((ex) => (
+                  <div 
+                    key={ex} 
+                    onClick={() => setSelectedExercise(ex)} 
+                    className="relative aspect-square border border-white/10 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:scale-[1.05] transition-all shadow-lg overflow-hidden group bg-slate-900"
+                  >
+                    {ex === "SQUAT" && <img src={squatImg} alt="squat" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-60 transition-opacity" />}
+                    <div className="relative z-10 flex flex-col items-center">
+                      <ScanLine size={48} className="text-blue-500 mb-4" />
+                      <span className="text-2xl font-black text-white uppercase">{ex}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ) : showDetail ? (
