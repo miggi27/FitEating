@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import { AuthProvider } from "./context/AuthContext";
 
 import DesignMain from "./pages/designa/DesignMain";
+import DietAddPage from './pages/DietAddPage';
 
 const themeStyles = {
   dark: {
@@ -53,6 +54,7 @@ const AppContent = () => {
                 <Route path="/exercise/:exId" element={<ExercisePage theme={theme} />} />
                 <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} />
                 <Route path="/diet" element={<DietPage theme={theme} />} />
+                <Route path="/diet/add" element={<DietAddPage />} />
                 <Route path="/blog" element={<BlogPage theme={theme} />} />
                 <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
               </Routes>

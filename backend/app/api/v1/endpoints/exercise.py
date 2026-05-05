@@ -11,11 +11,11 @@ stage = "ready"
 error_counts = {}
 total_frames = 0
 
-YOLO_WEIGHTS_PATH = "./models/best_big_bounding.pt"
+YOLO_WEIGHTS_PATH = "./models/exercise/best_big_bounding.pt"
 EXERCISE_MODEL_PATHS = {
-    "벤치프레스": "./models/benchpress/benchpress.pkl",
-    "스쿼트": "./models/squat/squat.pkl",
-    "데드리프트": "./models/deadlift/deadlift.pkl",
+    "벤치프레스": "./models/exercise/benchpress.pkl",
+    "스쿼트": "./models/exercise/squat.pkl",
+    "데드리프트": "./models/exercise/deadlift.pkl",
 }
 
 CAMERA_GUIDE = {
