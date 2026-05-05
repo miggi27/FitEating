@@ -1,10 +1,17 @@
+// src/App.jsx
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import TopNavbar from "./components/TopNavbar";
 import Navbar from "./components/Navbar";
 import ExercisePage from "./pages/ExercisePage";
 import DietPage from "./pages/DietPage";
 import BlogPage from "./pages/BlogPage";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { AuthProvider } from "./context/AuthContext";
+
+import DesignMain from "./pages/designa/DesignMain";
 
 const themeStyles = {
   dark: {
@@ -19,28 +26,53 @@ const themeStyles = {
   }
 };
 
-const App = () => {
+const AppContent = () => {
   const [theme, setTheme] = useState("dark");
   const s = themeStyles[theme];
 
   return (
-    <BrowserRouter>
-      <div className={`fixed inset-0 ${s.bg} ${s.text} flex flex-col overflow-hidden`}>
-        {/* 페이지 본문 영역 */}
-        <main className="flex-1 relative overflow-hidden flex justify-center">
-          <Routes>
-            <Route path="/" element={<Navigate to="/exercise" replace />} />
-            <Route path="/exercise" element={<ExercisePage themeStyles={s} theme={theme} />} />
-            <Route path="/diet" element={<DietPage theme={theme} />} />
-            <Route path="/blog" element={<BlogPage theme={theme} />} />
-            <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
-          </Routes>
-        </main>
+    <Routes>
+      {/* 1. 디자인 모드 (기존 유지) */}
+      <Route path="/designa/*" element={<DesignMain />} />
 
-        {/* 공통 하단 탭바 */}
-        <Navbar s={s} />
-      </div>
-    </BrowserRouter>
+      {/* 2. 로그인/회원가입 (내비바 없는 깨끗한 화면) */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+
+      {/* 3. 메인 서비스 영역 */}
+      <Route
+        path="*"
+        element={
+          <div className={`fixed inset-0 ${s.bg} ${s.text} flex flex-col overflow-hidden`}>
+            {/* 🟢 상단 네비바 고정 */}
+            <TopNavbar s={s} />
+            <main className="flex-1 relative overflow-hidden flex justify-center">
+              <Routes>
+                <Route path="/" element={<Navigate to="/exercise" replace />} />
+                <Route path="/exercise" element={<ExercisePage theme={theme} />} />
+                <Route path="/exercise/:exId" element={<ExercisePage theme={theme} />} />
+                <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} />
+                <Route path="/diet" element={<DietPage theme={theme} />} />
+                <Route path="/blog" element={<BlogPage theme={theme} />} />
+                <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
+              </Routes>
+            </main>
+            {/* 하단 네비바 고정 */}
+            <Navbar s={s} />
+          </div>
+        }
+      />
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider> {/* 🟢 전역 상태 주머니로 감싸기 */}
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 

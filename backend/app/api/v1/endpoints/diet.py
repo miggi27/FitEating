@@ -1,3 +1,4 @@
+# backend/app/api/v1/endpoints/diet.py
 import torch
 import torch.nn as nn
 from torchvision import models, transforms
@@ -6,9 +7,27 @@ from PIL import Image
 import pandas as pd
 import io
 import os
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+# 필요한 것들 임포트
+from app.database import get_db 
+from app.api.v1.endpoints.auth import get_current_user # 문지기 소환
+from app.models.user import User
 
 router = APIRouter()
+
+@router.post("/record")
+def record_diet(
+    meal_data: dict, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user) # 로그인한 사람만 통과!
+):
+    # 이제 current_user.id를 통해 누가 이 음식을 먹었는지 알 수 있습니다.
+    return {
+        "message": f"{current_user.username}님, 식단이 기록되었습니다!",
+        "received_data": meal_data
+    }
 
 # ---------------------------------------------------------
 # 1. 경로 설정 및 파일 로드

@@ -53,8 +53,8 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
     if (results.poseLandmarks) {
       const landmarks = results.poseLandmarks.flatMap((l) => [l.x, l.y, l.z, l.visibility]);
       try {
-        const res = await axios.post(`${API_BASE_URL}/analyze`, { landmarks, exercise_type: exercise });
-        const data = res.data;
+        const res = await axios.post(`${API_BASE_URL}/exercise/analyze`, { landmarks, exercise_type: exercise });
+        const data = res.data; // 이제 res가 정의되었으므로 에러 안 남!
         latestData.current = data;
 
         if (data.error_key && data.feedback_points) {

@@ -1,0 +1,12 @@
+# 백엔드주소 통합관리
+# frontend/src/api/config.js 에서 통합관리
+
+# 상단에 임포트문 추가
+import { API_BASE_URL } from "../api/config"; // API 주소 통일
+
+# 기존
+const res = await axios.post(`http://${window.location.hostname}:8001/api/v1/diet/analyze`, formData);
+# 변경
+const res = await axios.post(`${API_BASE_URL}/diet/analyze`, formData);
+
+# API_BASE_URL 는 http://${window.location.hostname}:8001/api/v1 까지와 같음

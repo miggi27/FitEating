@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Camera, Utensils, Trash2, Calculator, Loader2, CheckCircle } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "../api/config";
 
 const FoodCalculator = () => {
   const [preview, setPreview] = useState(null);
@@ -20,9 +21,9 @@ const FoodCalculator = () => {
     formData.append("file", file);
 
     try {
-      const host = window.location.hostname;
+      // const host = window.location.hostname; 지울것
       // 백엔드 API 호출
-      const res = await axios.post(`http://${host}:8001/api/v1/diet/analyze`, formData);
+      const res = await axios.post(`${API_BASE_URL}/diet/analyze`, formData);
       
       // 백엔드에서 받은 데이터 (결과가 없으면 빈 배열)
       const detectedData = Array.isArray(res.data) ? res.data : [];

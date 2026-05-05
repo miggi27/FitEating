@@ -4,6 +4,16 @@ import { Save, RotateCcw, Award, CheckCircle2, AlertCircle, Activity, Target, Sh
 
 const FeedbackDetail = ({ result, exerciseName, theme, onReset, onSaveToBlog }) => {
   const isDark = theme === 'dark';
+  // 🟢 데이터가 아직 안 넘어왔을 때 보여줄 안전장치 (무한 로딩 방지)
+  if (!result) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-500">
+        <Activity className="animate-spin mb-4" size={48} />
+        <p className="text-xl font-bold">분석 데이터를 불러오는 중입니다...</p>
+      </div>
+    );
+  }
+
   const s = {
     card: isDark ? 'bg-[#1c1c21] border-white/5' : 'bg-white border-slate-200',
     text: isDark ? 'text-slate-200' : 'text-slate-900',
@@ -44,20 +54,28 @@ const FeedbackDetail = ({ result, exerciseName, theme, onReset, onSaveToBlog }) 
 
       {/* 2. 시각적 분석: 캡처 & 레이더 차트 */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* 운동 이름과 분석 캡처 - 어떤 운동인지 명확히 인지 */}
-        <div className={`p-2 rounded-[35px] border ${s.card} shadow-2xl overflow-hidden bg-black`}>
-          {/* 🔥 빨간 원이 포함된 캡처 사진 배치 */}
-          {result?.capture_url ? (
-            <img src={result.capture_url} alt="Analysis Result" className="w-full h-full object-contain" />
+        <div className={`relative aspect-video md:aspect-square rounded-[35px] border ${s.card} shadow-2xl overflow-hidden bg-black flex items-center justify-center`}>
+          {/* 🔥 result.capture_url이 있으면 이미지를, 없으면 로딩 메시지 */}
+          {result.capture_url ? (
+            <img 
+              src={result.capture_url} 
+              alt="Analysis Result" 
+              className="w-full h-full object-contain"
+              onLoad={() => console.log("이미지 로드 완료!")}
+              onError={(e) => console.error("이미지 로드 실패:", result.capture_url)}
+            />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-slate-500 italic">영상 분석 이미지를 생성 중입니다...</div>
+            <div className="flex flex-col items-center gap-3 text-slate-500 italic p-10 text-center">
+              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <p>AI가 분석 이미지를 생성하고 있습니다...</p>
+            </div>
           )}
         </div>
 
         {/* 능력치 차트 */}
         <div className={`p-6 rounded-[32px] border ${s.card} flex flex-col items-center justify-center min-h-[350px]`}>
           <h3 className={`text-xs font-bold uppercase tracking-widest mb-4 ${s.subText}`}>Performance Chart</h3>
-          <div className="w-full h-[300px]"> 
+          <div className="w-full h-[300px] min-h-[300px]"> 
             {/* ResponsiveContainer 부모는 반드시 고정 높이가 있어야 합니다 */}
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>

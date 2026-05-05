@@ -1,33 +1,19 @@
 # backend/app/main.py
 from fastapi import FastAPI
-from app.api.v1.endpoints import exercise, diet
 from fastapi.middleware.cors import CORSMiddleware
 from sqladmin import Admin, ModelView
-from sqlalchemy import Column, Integer, String, DateTime, Float
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
-from datetime import datetime
+# 새로 만든 구조에서 가져오기
+from app.database import engine, Base
+from app.models.user import User
+from app.models.diet import DietLog
+from app.models.exercise import WorkoutLog
+# 기존 라우터들
+from app.api.v1.endpoints import exercise, diet, auth
 
 app = FastAPI()
 
-# --- [DB 설정 시작] ---
-DATABASE_URL = "sqlite:///./test.db"  # 현재 폴더에 test.db 파일이 생깁니다.
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-Base = declarative_base()
-
-# 블로그/운동로그 모델 정의
-class WorkoutLog(Base):
-    __tablename__ = "workout_logs"
-    id = Column(Integer, primary_key=True, index=True)
-    exercise_name = Column(String)  # SQUAT, DEAD 등
-    counter = Column(Integer)       # 횟수
-    score = Column(Float)           # 분석 점수
-    image_path = Column(String)     # 빨간 원 캡처 저장 경로
-    created_at = Column(DateTime, default=datetime.now)
-
-# DB 테이블 생성
+# 테이블 생성 (이 한 줄이 모든 모델의 테이블을 test.db에 만듭니다)
 Base.metadata.create_all(bind=engine)
-# --- [DB 설정 끝] ---
 
 # CORS 설정 (기존 유지)
 app.add_middleware(
@@ -38,26 +24,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🟢 SQLAdmin 설정 (관리자 페이지)
+# --- 관리자 페이지 설정 (컬럼 상세화) ---
 admin = Admin(app, engine)
 
-class WorkoutLogAdmin(ModelView, model=WorkoutLog):
-    # 리스트에 보여줄 컬럼들 (문자열로 써도 여긴 괜찮습니다)
-    column_list = ["id", "exercise_name", "counter", "score", "created_at"]
-    
-    # ✅ 검색 기능은 그대로 두셔도 됩니다.
-    column_searchable_list = ["exercise_name"]
-    
-    # ❌ 에러의 주범인 필터 기능을 일단 제거합니다.
-    # column_filters = ["exercise_name"]  <-- 이 줄을 삭제하거나 주석 처리하세요.
-    
-    name = "운동 기록"
-    name_plural = "운동 기록 목록"
-    icon = "fa-solid fa-chart-line"
+class UserAdmin(ModelView, model=User):
+    # 회원가입 상세 정보들을 리스트에서 볼 수 있게 추가
+    column_list = [
+        "id", "username", "gender", "height", "weight", 
+        "lifestyle", "goal", "created_at"
+    ]
+    name = "회원 관리"
+    icon = "fa-solid fa-user"
 
+class DietAdmin(ModelView, model=DietLog):
+    # 탄단지 영양소 정보를 리스트에 표시
+    column_list = [
+        "id", "meal_type", "food_name", "calories", 
+        "carbs", "protein", "fat", "date"
+    ]
+    name = "식단 관리"
+    icon = "fa-solid fa-utensils"
+
+class WorkoutLogAdmin(ModelView, model=WorkoutLog):
+    column_list = ["id", "exercise_name", "counter", "score", "created_at"]
+    name = "운동 기록"
+    icon = "fa-solid fa-dumbbell"
+
+admin.add_view(UserAdmin)
+admin.add_view(DietAdmin)
 admin.add_view(WorkoutLogAdmin)
 
 # 라우터 등록
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(exercise.router, prefix="/api/v1/exercise", tags=["exercise"])
 app.include_router(diet.router, prefix="/api/v1/diet", tags=["diet"])
 

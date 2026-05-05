@@ -6,22 +6,34 @@ backend/
 ├── app/
 │   ├── main.py           # 실행 시작점
 │   ├── api/
-│   │   └── v1/
+│   │   └── v1/.          # 버전관리용 폴더
 │   │       ├── api.py    # 아직 없음
 │   │       └── endpoints/
 │   │           ├── exercise.py  # Mediapipe 관련 로직용
 │   │           └── diet.py      # 식단 관련 로직용
+│   │           └── auth.py      # 🟢 [추가] 로그인/회원가입 API 로직
 │   ├── core/             # 설정 (DB 주소 등)
+│   │   └── security.py   # 토큰 관리, 비밀번호 해싱
 │   ├── models/           # DB 테이블 (SQLAlchemy)
+│   │   ├── exercise.py  # 기존 운동 로그 테이블
+│   │   ├── user.py     # 🟢 [추가] 회원 정보 (나이, 성별, 키, 몸무게 등)
+│   │   └── diet.py     # 🟢 [추가] 식단 기록 (아침/점심/저녁/간식)
 │   └── schemas/          # 데이터 검증 (Pydantic)
+│       ├── exercise.py
+│       ├── user.py     # 🟢 [추가] 회원가입 시 데이터 검증용
+│       └── diet.py     # 🟢 [추가] 식단 입력 데이터 검증용
 └── requirements.txt
 
 frontend/
 ├── node_modules/       # 설치된 라이브러리들 (자동 생성)
 ├── public/             # 소리 파일(.mp3), 가이드 영상 등 정적 파일
-│   └── sounds/         # correct.mp3 등 알림음
+│   ├── images/         # 
+│   ├── sounds/         # correct.mp3 등 알림음(현재사용안함)
+│   └── video/          # 
 ├── src/                # 실제 개발 소스 코드
-│   ├── assets/         # 로고 등 이미지
+│   ├── api/            # 
+│   │   └── config.js   # 백엔드 경로 저장
+│   ├── assets/         # 로고 등 이미지 저장폴더
 │   ├── components/     # 공용 UI (Layout.jsx, Navbar.jsx 등)
 │   ├── features/       # 핵심 기능 (여기에 ExerciseAnalyzer 등이 들어감)
 │   │   ├── exercise/   # 운동 관련
@@ -36,6 +48,11 @@ frontend/
 │   │   ├── FeedbackDetail.jsx # 운동분석 상세페이지
 │   │   ├── FoodCalculator.jsx 
 │   │   └── Settings.jsx     # 설정 페이지
+│   └── designa/                  # 🟢 디자인 담당자 작업 구역
+│       ├── DesignLayout.jsx      # 디자인 모드 전용 배경/네비 틀
+│       ├── DesignExercise.jsx    # 디자인 모드용 운동 페이지
+│       ├── DesignDiet.jsx        # 디자인 모드용 식단 페이지
+│       └── DesignMain.jsx        # 디자인 모드 시작점 (Entry)
 │   ├── App.jsx         # 메인 라우팅 설정
 │   └── main.jsx        # 리액트 시작점
 ├── .gitignore          # 깃 제외 목록

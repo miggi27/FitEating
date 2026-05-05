@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import ExerciseAnalyzer from "../features/exercise/ExerciseAnalyzer";
-import FeedbackDetail from "./FeedbackDetail";
+// 기존: import ExerciseAnalyzer from "../features/exercise/ExerciseAnalyzer";
+// 수정: 한 단계를 더 올라가야 합니다 (../../)
+import ExerciseAnalyzer from "../../features/exercise/ExerciseAnalyzer";
+import FeedbackDetail from "../FeedbackDetail";
 import { ScanLine, Upload, Camera } from "lucide-react";
-import squatImg from "../assets/squat.jpg";
-import { API_BASE_URL } from "../api/config";
+import squatImg from "../../assets/squat.jpg";
+import { API_BASE_URL } from "../../api/config"; // API 주소 통일
 
 const CAMERA_GUIDE = {
   "SQUAT": "측면에서 촬영하세요. 무릎·허리 라인이 한눈에 보이게 옆에서 찍어야 무릎 안쪽 꺾임과 척추 각도를 판정할 수 있습니다.",
@@ -14,66 +15,61 @@ const CAMERA_GUIDE = {
 };
 
 const ExercisePage = ({ theme }) => {
-  // 🟢 1. 이제 상태(useState) 대신 URL 파라미터를 사용합니다.
-  const { exId, mode } = useParams(); // /exercise/:exId/:mode (예: /exercise/squat/detail)
-  const navigate = useNavigate();
-  const location = useLocation(); // 짐 가방 확인용
-
-  // URL 값을 대문자로 변환하여 기존 로직에 대응
-  const selectedExercise = exId?.toUpperCase(); 
-  const showDetail = mode === "detail";
-
+  const [selectedExercise, setSelectedExercise] = useState(null);
   const [isStarted, setIsStarted] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [analysisResult, setAnalysisResult] = useState({ counter: 0, angle: 0 });
-  // 🟢 짐 가방에 데이터가 있으면 그걸 쓰고, 없으면 null (방어 코드)
-  const [finalResult, setFinalResult] = useState(location.state?.result || null);
+  const [finalResult, setFinalResult] = useState(null);
   const analyzerRef = useRef(null);
 
   const isDark = theme === "dark";
 
-  useEffect(() => {
-    // 1. 주소창의 짐 가방에 결과가 있고, 현재 finalResult가 비어있다면?
-    if (location.state?.result && !finalResult) {
-      console.log("짐 가방에서 데이터를 찾았습니다!", location.state.result);
-      setFinalResult(location.state.result);
-    }
-  }, [location.state, finalResult]); // 짐 가방이 바뀌거나 결과값이 바뀔 때마다 체크
-
-  // 🟢 2. 모든 이동은 navigate로 처리 (네비바가 이걸 보고 경로를 그립니다)
-  const handleSelect = (ex) => {
-    navigate(`/exercise/${ex.toLowerCase()}`);
-  };
-
-  const handleComplete = (data) => {
-    // setFinalResult(data);
-    navigate(`/exercise/${exId}/detail`, { state: { result: data } });
-  };
-
   const handleReset = () => {
+    setShowDetail(false);
+    setSelectedExercise(null);
     setIsStarted(false);
-    setFinalResult(null);
+    // setFinalResult(null);
     setAnalysisResult({ counter: 0, angle: 0 });
-    navigate("/exercise"); // 운동 선택 화면으로
   };
 
   const handleBackToGuide = () => {
     setIsStarted(false);
-    navigate(`/exercise/${exId}`); // 상세에서 가이드로 back
+    setShowDetail(false);
   };
 
   return (
     <div className={`w-full h-full relative ${isDark ? "bg-[#0f0f12]" : "bg-slate-50"} overflow-hidden flex flex-col`}>
       
+      {/* 상단 네비게이션 바 (수정 사항) */}
+      {selectedExercise && (
+        <div className="z-[110] px-8 py-4 flex items-center gap-2 text-lg font-bold border-b border-white/5 bg-black/20 backdrop-blur-md">
+          <span 
+            onClick={handleReset} 
+            className="cursor-pointer hover:text-blue-500 transition-colors text-slate-400"
+          >
+            FIT-EATING
+          </span>
+          <span className="text-slate-600">/</span>
+          <span 
+            onClick={handleBackToGuide} 
+            className="cursor-pointer hover:text-blue-500 transition-colors text-white uppercase"
+          >
+            {selectedExercise}
+          </span>
+        </div>
+      )}
+
       <div className="flex-1 relative">
         {!selectedExercise ? (
-          /* [선택 창] */
+          /* [선택 창] - 수정된 구조 */
           <div className="absolute inset-0 overflow-y-auto"> 
+            {/* items-center를 빼고 flex flex-col과 py-12(여백) 추가 */}
             <div className="min-h-full flex flex-col items-center justify-start md:justify-center p-6 py-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
                 {["SQUAT", "DEAD", "BENCH"].map((ex) => (
                   <div 
                     key={ex} 
-                    onClick={() => handleSelect(ex)} // 🟢 handleSelect 호출
+                    onClick={() => setSelectedExercise(ex)} 
                     className="relative aspect-square border border-white/10 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:scale-[1.05] transition-all shadow-lg overflow-hidden group bg-slate-900"
                   >
                     {ex === "SQUAT" && <img src={squatImg} alt="squat" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-60 transition-opacity" />}
@@ -89,6 +85,7 @@ const ExercisePage = ({ theme }) => {
         ) : showDetail ? (
           /* [상세 페이지] */
           <div className="absolute inset-0 overflow-y-auto p-6 pb-24">
+          {/* <div className="h-full overflow-y-auto px-6 py-10"> */}
             <div className="max-w-6xl mx-auto">
               <FeedbackDetail result={finalResult} exerciseName={selectedExercise} theme={theme} onReset={handleReset} />
             </div>
@@ -101,13 +98,16 @@ const ExercisePage = ({ theme }) => {
               exercise={selectedExercise} 
               onResultUpdate={(data) => {
                 setAnalysisResult(data);
-                if (data && data.capture_url) setFinalResult(data);
+                if (data.capture_url) setFinalResult(data);
+              }} 
+              onAnalysisComplete={(data) => {
+                setFinalResult(prev => ({ ...data, capture_url: prev?.capture_url || data.capture_url }));
+                setShowDetail(true);
               }}
-              onAnalysisComplete={handleComplete} // 🟢 handleComplete 호출
               isStarted={isStarted}
             />
             
-            {/* 가이드 오버레이 */}
+            {/* 가이드 오버레이 (상단 메시지 삭제됨) */}
             {!isStarted && (
               <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 text-center">
                 <div className="max-w-xl w-full">
