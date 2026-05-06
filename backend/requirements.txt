@@ -6,15 +6,19 @@ annotated-types==0.7.0
 anyio==4.13.0
 asttokens==3.0.1
 attrs==26.1.0
+bcrypt==3.2.0
 blinker==1.9.0
 cachetools==5.5.2
 certifi==2026.4.22
 cffi==2.0.0
 charset-normalizer==3.4.7
 click==8.3.3
+colorama==0.4.6
 contourpy==1.3.2
+cryptography==48.0.0
 cycler==0.12.1
 decorator==5.2.1
+ecdsa==0.19.2
 exceptiongroup==1.3.1
 executing==2.2.1
 fastapi==0.136.1
@@ -24,6 +28,7 @@ fonttools==4.62.1
 fsspec==2026.3.0
 gitdb==4.0.12
 GitPython==3.1.49
+greenlet==3.5.0
 h11==0.16.0
 idna==3.13
 importlib_metadata==7.2.1
@@ -53,6 +58,7 @@ opt_einsum==3.4.0
 packaging==23.2
 pandas==2.1.4
 parso==0.8.6
+passlib==1.7.4
 pexpect==4.9.0
 pillow==10.2.0
 plotly==6.7.0
@@ -64,6 +70,7 @@ psutil==7.2.2
 ptyprocess==0.7.0
 pure_eval==0.2.3
 pyarrow==24.0.0
+pyasn1==0.6.3
 pycparser==3.0
 pydantic==2.13.3
 pydantic-settings==2.14.0
@@ -73,6 +80,7 @@ Pygments==2.20.0
 pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
+python-jose==3.5.0
 python-multipart==0.0.27
 pytz==2026.1.post1
 PyYAML==6.0.1
@@ -80,6 +88,7 @@ referencing==0.37.0
 requests==2.33.1
 rich==13.9.4
 rpds-py==0.30.0
+rsa==4.9.1
 scikit-learn==1.3.2
 scipy==1.15.3
 seaborn==0.13.2
@@ -95,8 +104,9 @@ sympy==1.14.0
 tenacity==8.5.0
 threadpoolctl==3.6.0
 toml==0.10.2
-torch==2.11.0
-torchvision==0.26.0
+torch==2.11.0+cpu
+torchaudio==2.11.0+cpu
+torchvision==0.26.0+cpu
 tornado==6.5.5
 tqdm==4.66.1
 traitlets==5.14.3
@@ -109,6 +119,7 @@ ultralytics-thop==2.0.19
 urllib3==2.6.3
 uvicorn==0.46.0
 validators==0.35.0
+watchdog==6.0.0
 wcwidth==0.6.0
 WTForms==3.1.2
 zipp==3.23.1

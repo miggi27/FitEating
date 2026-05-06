@@ -21,7 +21,7 @@ const TopNavbar = ({ s }) => {
       
       {/* 왼쪽: 탐색기형 경로 (Breadcrumb) */}
       <div className="flex items-center gap-2 text-sm font-bold tracking-tighter overflow-x-auto whitespace-nowrap scrollbar-hide max-w-[70%]">
-      <Link to="/" className="hover:text-blue-500 transition-colors uppercase flex-shrink-0">FIT-EATING</Link>
+      <Link to="/Dashboard" className="hover:text-blue-500 transition-colors uppercase flex-shrink-0">FIT-EATING</Link>
       
       {pathnames.map((name, index) => {
           const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;

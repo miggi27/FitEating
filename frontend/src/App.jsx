@@ -9,6 +9,7 @@ import BlogPage from "./pages/BlogPage";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
 
 import DesignMain from "./pages/designa/DesignMain";
@@ -56,6 +57,7 @@ const AppContent = () => {
                 <Route path="/diet" element={<DietPage theme={theme} />} />
                 <Route path="/diet/add" element={<DietAddPage />} />
                 <Route path="/blog" element={<BlogPage theme={theme} />} />
+                <Route path="/Dashboard" element={<Dashboard theme={theme} />} />
                 <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
               </Routes>
             </main>

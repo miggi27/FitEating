@@ -5,6 +5,8 @@ import ExerciseAnalyzer from "../features/exercise/ExerciseAnalyzer";
 import FeedbackDetail from "./FeedbackDetail";
 import { ScanLine, Upload, Camera } from "lucide-react";
 import squatImg from "../assets/squat.jpg";
+import deadliftImg from "../assets/deadlift.jpg";
+import benchpressImg from "../assets/benchpress.jpg";
 import { API_BASE_URL } from "../api/config";
 
 const CAMERA_GUIDE = {
@@ -76,7 +78,9 @@ const ExercisePage = ({ theme }) => {
                     onClick={() => handleSelect(ex)} // 🟢 handleSelect 호출
                     className="relative aspect-square border border-white/10 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:scale-[1.05] transition-all shadow-lg overflow-hidden group bg-slate-900"
                   >
-                    {ex === "SQUAT" && <img src={squatImg} alt="squat" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-60 transition-opacity" />}
+                    {ex === "SQUAT" && <img src={squatImg} alt="squat" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-80 transition-opacity" />}
+                    {ex === "DEAD" && <img src={deadliftImg} alt="deadlift" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-80 transition-opacity" />}
+                    {ex === "BENCH" && <img src={benchpressImg} alt="benchpress" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-80 transition-opacity" />}
                     <div className="relative z-10 flex flex-col items-center">
                       <ScanLine size={48} className="text-blue-500 mb-4" />
                       <span className="text-2xl font-black text-white uppercase">{ex}</span>
