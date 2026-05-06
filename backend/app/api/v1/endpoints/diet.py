@@ -80,7 +80,10 @@ def search_food_nutrition(name: str):
 async def record_specific(
     meal_type: str = Form(...),
     food_name: str = Form(...),
-    # ... 기타 영양 정보 ...
+    calories: float = Form(...),
+    carbs: float = Form(...),
+    protein: float = Form(...),
+    fat: float = Form(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -96,7 +99,8 @@ async def record_specific(
         # 🟢 수정 모드: 기존 기록의 수치만 업데이트
         existing.calories = calories
         existing.carbs = carbs
-        # ... (생략) ...
+        existing.protein = protein
+        existing.fat = fat
         db.commit()
         return {"message": "기존 식단이 수정되었습니다!", "status": "updated"}
     
