@@ -53,6 +53,7 @@ class WorkoutLogAdmin(ModelView, model=WorkoutLog):
 admin.add_view(UserAdmin)
 admin.add_view(DietAdmin)
 admin.add_view(WorkoutLogAdmin)
+# --- 관리자 페이지 설정 (컬럼 상세화) ---
 
 # 라우터 등록
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
