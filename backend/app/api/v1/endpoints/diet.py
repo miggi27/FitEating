@@ -29,7 +29,7 @@ while os.path.basename(BASE_DIR) != "backend":
 FOOD_CSV = os.path.join(BASE_DIR, "app", "data", "food_master_음식_utf8.csv")
 PROCESS_CSV = os.path.join(BASE_DIR, "app", "data", "food_master_가공_utf8.csv")
 
-print(f"📍 확인된 CSV 경로: {FOOD_CSV}") # 서버 뜰 때 터미널에서 확인용!
+print(f"📍 확인된 CSV 경로: {FOOD_CSV}, {PROCESS_CSV}") # 서버 뜰 때 터미널에서 확인용!
 
 # 파일 정리되면 지울것
 # ---------------------------------------------------------
@@ -78,7 +78,7 @@ def search_food_nutrition(name: str):
 
 @router.post("/record-specific")
 async def record_specific(
-    meal_type: str = Form(...),
+    meal_type: str = Form(...),  # 아침, 점심, 저녁, 간식 구분
     food_name: str = Form(...),
     calories: float = Form(...),
     carbs: float = Form(...),
