@@ -157,19 +157,6 @@ CAMERA_GUIDE = {
     "레그 레이즈": "측면에서 촬영하세요. 골반·무릎·발목이 한 화면에 들어와야 다리 각도, 허리 부착, 무릎 굽힘 정도를 판정할 수 있습니다.",
 }
 
-# GUIDE_IMAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "guide_images")
-# GUIDE_IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
-
-
-# def _find_guide_image(exercise_name: str):
-#     for ext in GUIDE_IMAGE_EXTS:
-#         candidate = os.path.join(GUIDE_IMAGES_DIR, f"{exercise_name}{ext}")
-#         if os.path.exists(candidate):
-#             return candidate
-#     return None
-
-# 1. 파일 위치(backend/app)를 기준으로 경로 재설정
-# __file__이 Streamlit_Upload4.py이므로 dirname은 backend/app이 됩니다.
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 GUIDE_IMAGES_DIR = os.path.join(BASE_DIR, "data", "guide_images")
 

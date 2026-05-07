@@ -5,7 +5,7 @@ from sqladmin import Admin, ModelView
 # 새로 만든 구조에서 가져오기
 from app.database import engine, Base
 from app.models.user import User
-from app.models.diet import DietLog
+from app.models.diet_log import DietLog
 from app.models.exercise import WorkoutLog
 # 기존 라우터들
 from app.api.v1.endpoints import exercise, diet, auth
