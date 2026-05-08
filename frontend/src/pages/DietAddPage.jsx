@@ -13,10 +13,37 @@ const DietAddPage = () => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [foods, setFoods] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const [isFavSet, setIsFavSet] = useState(false);
 
+  const [favorites, setFavorites] = useState({ meal: [], snack: [] });
+  const [activeTab, setActiveTab] = useState(mealType === "간식" ? "snack" : "meal");
+  const [favList, setFavList] = useState([]); // 즐겨찾기 목록 저장
+  const [showFavs, setShowFavs] = useState(false); // 팝업/모달 제어
+  const [feedback, setFeedback] = useState(""); // 피드백 문구
+
   const generateId = () => `row-${Math.random().toString(36).substr(2, 9)}`;
+
+  // 데이터 로드 시
+  useEffect(() => {
+    const fetchFavs = async () => {
+      const res = await axios.get(`${API_BASE_URL}/diet/favorites`, { headers: { Authorization: `Bearer ${token}` } });
+      setFavorites(res.data);
+    };
+    fetchFavs();
+  }, [token]);
+
+  // 세트 클릭 시: 사진 + 음식 리스트 + 그람수 통째로 복원
+  const applyMealSet = (selectedSet) => {
+    if (!window.confirm("선택한 세트로 식단을 교체할까요?")) return;
+    
+    const restored = selectedSet.items.map(item => ({
+      ...item,
+      id: generateId()
+    }));
+    
+    setFoods(restored); // 음식 리스트 & 그람수 복원
+    setPreview(selectedSet.image_url); // 사진 복원
+  };
 
   useEffect(() => {
     const initPage = async () => {
@@ -70,6 +97,47 @@ const DietAddPage = () => {
 
   const totalKcal = foods.reduce((sum, f) => sum + ((f.calories * (f.weight || 100)) / 100), 0);
 
+  const fetchNutrition = async (index, name) => {
+    if (!name.trim()) return;
+    
+    try {
+      const res = await axios.get(`${API_BASE_URL}/diet/search-nutrition`, {
+        params: { name: name },
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (res.data) {
+        const newFoods = [...foods];
+        newFoods[index] = {
+          ...newFoods[index],
+          food_name: res.data.food_name,
+          calories: res.data.kcal,
+          carbs: res.data.carbs,
+          protein: res.data.protein,
+          fat: res.data.fat,
+        };
+        setFoods(newFoods);
+      }
+    } catch (err) {
+      console.error("영양 정보 검색 실패", err);
+    }
+  };
+
+  // 1. 그람수 변경 핸들러
+  const handleWeightChange = (index, value) => {
+    const newFoods = [...foods];
+    newFoods[index].weight = Number(value); // 숫자로 변환하여 저장
+    setFoods(newFoods);
+  };
+
+  const addFavoriteToFoods = (fav) => {
+    setFoods(prev => [
+      ...prev.filter(f => f.food_name !== ""), // 빈 줄 제거
+      { ...fav, id: generateId(), weight: 100 }
+    ]);
+    setShowFavs(false); // 창 닫기
+  };
+
   return (
     <div className="h-screen bg-[#0c0c0e] text-white overflow-y-auto pb-40">
       <div className="flex justify-between items-center p-4 border-b border-white/5">
@@ -97,7 +165,16 @@ const DietAddPage = () => {
           </div>
           {foods.map((f, i) => (
             <div key={f.id} className="grid grid-cols-12 px-4 py-4 items-center border-b border-white/5 last:border-0">
-              <input className="col-span-4 bg-transparent text-xs font-bold text-white outline-none" value={f.food_name} onChange={e => { const n = [...foods]; n[i].food_name = e.target.value; setFoods(n); }} />
+              <input className="col-span-4 bg-transparent text-xs font-bold text-white outline-none" value={f.food_name} onChange={e => { const n = [...foods]; n[i].food_name = e.target.value; setFoods(n); }} 
+              // 엔터를 누르거나 입력창을 벗어날 때 검색 실행
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  fetchNutrition(i, f.food_name);
+                }
+              }}
+              onBlur={() => fetchNutrition(i, f.food_name)} 
+              placeholder="음식 이름 입력..."
+              />
               <div className="col-span-5 flex justify-around text-[9px] font-black italic">
                 <span className="text-blue-400">{Math.round(f.carbs)}</span>
                 <span className="text-orange-400">{Math.round(f.protein)}</span>
@@ -105,7 +182,13 @@ const DietAddPage = () => {
                 <span className="text-white underline decoration-blue-500/50">{Math.round((f.calories * f.weight) / 100)}</span>
               </div>
               <div className="col-span-3 flex items-center justify-end">
-                <input type="number" className="w-8 bg-transparent text-right text-xs font-black text-blue-500 outline-none" value={f.weight} onChange={e => { const n = [...foods]; n[i].weight = e.target.value; setFoods(n); }} />
+                <input 
+                  type="number" 
+                  className="w-12 bg-transparent text-right text-xs font-black text-blue-500 outline-none" 
+                  value={f.weight} 
+                  onChange={e => handleWeightChange(i, e.target.value)} // 전용 함수 연결
+                />
+                <span className="text-[8px] text-slate-500 ml-1">g</span>
                 <Trash2 size={12} className="ml-2 text-slate-700 cursor-pointer" onClick={() => setFoods(foods.filter(it => it.id !== f.id))} />
               </div>
             </div>
@@ -122,6 +205,50 @@ const DietAddPage = () => {
           </div>
           <button onClick={handleFinalSave} className="w-full py-5 bg-blue-600 text-white font-black uppercase text-[12px] tracking-[0.2em] rounded-2xl active:scale-95 transition-all">식단 상세 저장 완료</button>
         </div>
+
+        {/* --- AI 영양 피드백 구간 --- */}
+        {totalKcal > 0 && (
+          <div className="mx-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Star size={14} className="text-blue-500" />
+              <span className="text-[10px] font-black text-blue-500 uppercase">AI Diet Feedback</span>
+            </div>
+            <p className="text-xs text-slate-300 font-medium">
+              {totalKcal < 300 ? "에너지가 조금 낮아요. 견과류를 곁들여보세요!" : "균형 잡힌 식사입니다."}
+            </p>
+          </div>
+        )}
+
+        <div className="px-4 mb-6">
+          <div className="flex gap-4 border-b border-white/5 mb-4">
+            <button 
+              onClick={() => setActiveTab("meal")}
+              className={`pb-2 text-[10px] font-black uppercase ${activeTab === "meal" ? "text-blue-500 border-b-2 border-blue-500" : "text-slate-600"}`}
+            >
+              Meal Sets
+            </button>
+            <button 
+              onClick={() => setActiveTab("snack")}
+              className={`pb-2 text-[10px] font-black uppercase ${activeTab === "snack" ? "text-orange-500 border-b-2 border-orange-500" : "text-slate-600"}`}
+            >
+              Snack Sets
+            </button>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {favorites[activeTab]?.map((set, idx) => (
+              <div key={idx} onClick={() => applyMealSet(set)} className="flex-none w-28 cursor-pointer">
+                <div className="aspect-square rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 mb-2">
+                  <img src={set.image_url || "/default_food.png"} className="w-full h-full object-cover" />
+                </div>
+                <p className="text-[9px] font-bold text-center text-slate-400 truncate">
+                  {set.items.map(i => i.food_name).join(", ")}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

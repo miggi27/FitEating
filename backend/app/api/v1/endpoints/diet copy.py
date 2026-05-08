@@ -171,35 +171,39 @@ async def analyze_food(file: UploadFile = File(...)):
 
 # 🟢 저장 API 수정
 @router.post("/record-many")
-def record_many_diet(data: dict, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def record_many_diet(
+    data: dict, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
     items = data.get("items", [])
     meal_type = data.get("meal_type")
+    image_url = data.get("image_url")
+    # 🟢 프론트에서 보낸 즐겨찾기 체크 여부 (isFavSet 값)
+    save_as_fav = 1 if data.get("save_as_favorite") else 0
     today = date.today()
 
-    # 기존 기록 삭제 (수정/업데이트 대응)
+    # 1. 기존 같은 끼니 데이터 삭제 (수정 모드 대응)
     db.query(DietLog).filter(
         DietLog.user_id == current_user.id, 
         DietLog.date == today, 
         DietLog.meal_type == meal_type
     ).delete()
 
+    # 2. 새로운 데이터 등록
     for item in items:
-        # 🟢 무게(weight) 반영 로직
-        # 사용자가 입력한 무게가 있으면 사용하고, 없으면 기본값 100g
-        input_w = float(item.get("weight", 100))
-        ratio = input_w / 100.0  # 공공데이터 기준인 100g 대비 비율
-
         new_log = DietLog(
             user_id=current_user.id,
             food_name=item.get("food_name"),
-            # 기준값에 무게 비율(ratio)을 곱해서 실제 섭취량으로 저장
-            calories=float(item.get("calories", 0)) * ratio,
-            carbs=float(item.get("carbs", 0)) * ratio,
-            protein=float(item.get("protein", 0)) * ratio,
-            fat=float(item.get("fat", 0)) * ratio,
-            weight=input_w,
+            calories=item.get("calories", 0),
+            carbs=item.get("carbs", 0),
+            protein=item.get("protein", 0),
+            fat=item.get("fat", 0),
+            weight=item.get("weight", 100),  # 이제 에러 안 남
             meal_type=meal_type,
-            date=today
+            image_url=image_url,
+            date=today,  # 모델의 컬럼명이 date이므로 수정
+            is_favorite=save_as_fav  # 🟢 이 줄이 있어야 DB에 1이 들어갑니다!
         )
         db.add(new_log)
     
@@ -208,63 +212,22 @@ def record_many_diet(data: dict, db: Session = Depends(get_db), current_user: Us
 
 @router.get("/daily-summary")
 def get_daily_summary(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    logs = db.query(DietLog).filter(
-        DietLog.user_id == current_user.id, 
-        DietLog.date == date.today()
-    ).all()
-
-    # 무게가 이미 반영되어 저장된 수치들을 합산
-    total_data = {
-        "kcal": sum(l.calories for l in logs),
-        "carbs": sum(l.carbs for l in logs),
-        "protein": sum(l.protein for l in logs),
-        "fat": sum(l.fat for l in logs)
-    }
-
-    return {
-        "total": total_data, 
-        "logs": logs
-    }
+    logs = db.query(DietLog).filter(DietLog.user_id == current_user.id, DietLog.date == date.today()).all()
+    return {"logs": logs}
 
 # 🟢 즐겨찾기 목록 가져오기
 @router.get("/favorites")
-def get_favorites_categorized(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # 모든 즐겨찾기 데이터를 가져옴
-    fav_logs = db.query(DietLog).filter(
-        DietLog.user_id == current_user.id, 
-        DietLog.is_favorite == 1
-    ).order_by(DietLog.created_at.desc()).all()
-
-    # 결과 구조: { "식사": [세트1, 세트2], "간식": [세트1, 세트2] }
-    result = {"meal": [], "snack": []}
-    sets = {}
-
-    for log in fav_logs:
-        # 사진 경로를 기준으로 세트를 묶음 (사진이 없다면 생성 날짜 분 단위로 묶음)
-        group_key = log.image_url if log.image_url else log.created_at.strftime("%Y-%m-%d %H:%M")
-        
-        if group_key not in sets:
-            sets[group_key] = {
-                "meal_type": log.meal_type,
-                "image_url": log.image_url,
-                "items": []
-            }
-        
-        sets[group_key]["items"].append({
-            "food_name": log.food_name,
-            "calories": log.calories,
-            "carbs": log.carbs,
-            "protein": log.protein,
-            "fat": log.fat,
-            "weight": log.weight
-        })
-
-    # meal_type에 따라 분류 (아침/점심/저녁 -> meal, 간식 -> snack)
-    for key, s in sets.items():
-        category = "snack" if s["meal_type"] == "간식" else "meal"
-        result[category].append(s)
-
-    return result
+def get_favorites(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # 1로 저장된 음식들을 중복 없이 가져옴
+    favs = db.query(DietLog.food_name, DietLog.calories, DietLog.carbs, DietLog.protein, DietLog.fat)\
+             .filter(DietLog.user_id == current_user.id, DietLog.is_favorite == 1)\
+             .group_by(DietLog.food_name).all()
+    
+    # 프론트가 쓰기 편하게 딕셔너리 리스트로 변환
+    return [
+        {"food_name": f[0], "calories": f[1], "carbs": f[2], "protein": f[3], "fat": f[4]} 
+        for f in favs
+    ]
 
 # 🟢 영양 피드백 생성 (간단 버전)
 @router.post("/feedback")

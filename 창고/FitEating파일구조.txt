@@ -17,7 +17,7 @@ backend/
 │   ├── models/           # DB 테이블 (SQLAlchemy)
 │   │   ├── exercise.py  # 기존 운동 로그 테이블
 │   │   ├── user.py     # 🟢 [추가] 회원 정보 (나이, 성별, 키, 몸무게 등)
-│   │   └── diet.py     # 🟢 [추가] 식단 기록 (아침/점심/저녁/간식)
+│   │   └── diet_log.py     # 🟢 [추가] 식단 기록 (아침/점심/저녁/간식)
 │   └── schemas/          # 데이터 검증 (Pydantic)
 │       ├── exercise.py
 │       ├── user.py     # 🟢 [추가] 회원가입 시 데이터 검증용

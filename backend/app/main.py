@@ -18,7 +18,8 @@ Base.metadata.create_all(bind=engine)
 # CORS 설정 (기존 유지)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # allow_origins=["*"],
+    allow_origins=["http://localhost:5173"], # 리액트 주소
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

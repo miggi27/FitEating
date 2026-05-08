@@ -4,8 +4,8 @@ import os
 # 1. 파일 경로 설정 (기필코님 환경에 맞춰서 수정)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # data 폴더 안에 넣어두신 파일명으로 바꾸세요!
-ORIGINAL_CSV = os.path.join(BASE_DIR, "data", "food_master_음식.csv") 
-NEW_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv")
+ORIGINAL_CSV = os.path.join(BASE_DIR, "data", "food_info2.csv") 
+NEW_CSV = os.path.join(BASE_DIR, "data", "food_info2_utf8.csv")
 
 def fix_csv_encoding():
     try:

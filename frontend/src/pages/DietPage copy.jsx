@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../api/config';
 import { useNavigate } from 'react-router-dom';
-import { Plus, RotateCcw, Edit3 } from 'lucide-react';
+import { Plus, RotateCcw, Edit3, ChevronRight } from 'lucide-react';
 
 const DietPage = () => {
   const navigate = useNavigate();
@@ -14,28 +14,14 @@ const DietPage = () => {
   });
 
   const fetchSummary = async () => {
-    const token = localStorage.getItem('token');
-    
-    // 🟢 [수정 1] 토큰이 없으면 로그인 페이지로 강제 이동 (401 에러 사전 방지)
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
     try {
+      const token = localStorage.getItem('token');
       const res = await axios.get(`${API_BASE_URL}/diet/daily-summary`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log("서버에서 받은 전체 데이터:", res.data);
+      // 데이터가 존재할 때만 업데이트
       if (res.data) setSummary(res.data);
-    } catch (err) { 
-      console.error("데이터 로드 실패", err);
-      // 만약 토큰 만료로 401 에러가 나면 로그인으로 보냄
-      if (err.response?.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
-    }
+    } catch (err) { console.error("데이터 로드 실패", err); }
   };
 
   useEffect(() => { fetchSummary(); }, []);
@@ -52,17 +38,20 @@ const DietPage = () => {
   };
 
   return (
-    <div className="h-screen bg-[#09090b] text-zinc-100 overflow-y-auto pb-44 px-4 pt-6">
-      <div className="max-w-md mx-auto space-y-6">
-        {/* 대시보드 (기존 디자인 유지) */}
+    // 🟢 [수정 1] pb-40을 추가하여 하단 네비바 공간 확보 (스크롤 끝까지 가능)
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 p-4 lg:p-8 flex justify-center">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* 누적 영양성분 대시보드 - 디자인 100% 유지 */}
         <div className="bg-zinc-900 rounded-[2.5rem] p-8 border border-white/5 shadow-2xl bg-gradient-to-br from-zinc-900 to-black">
           <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">Daily Accumulation</p>
           <div className="flex items-baseline gap-2">
+            {/* ?. 연산자를 사용하여 데이터 로딩 중 에러 발생 차단 */}
             <span className="text-5xl font-black italic tracking-tighter">
               {Math.round(summary?.total?.kcal || 0)}
             </span>
             <span className="text-xl font-bold text-zinc-600">kcal</span>
           </div>
+          
           <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/5">
             {[
               { label: 'Carbs', val: summary?.total?.carbs || 0, color: 'text-blue-400' },
@@ -95,6 +84,7 @@ const DietPage = () => {
         {/* 식단 리스트 */}
         <div className="space-y-3">
           {['아침', '점심', '저녁', '간식'].map((type) => {
+            // logs가 undefined일 경우를 대비해 빈 배열로 필터링
             const meals = (summary?.logs || []).filter(l => l.meal_type === type);
             const hasData = meals.length > 0;
 
@@ -119,8 +109,7 @@ const DietPage = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {/* 🟢 [수정 2] 간식은 데이터가 있어도 무조건 Plus 버튼 노출, 나머지는 수정 버튼 노출 */}
-                  {(hasData && type !== '간식') ? (
+                  {hasData ? (
                     <button 
                       onClick={() => navigate(`/diet/add?type=${type}`)} 
                       className="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-400 flex items-center justify-center hover:text-blue-500 border border-white/5 shadow-inner"
@@ -130,10 +119,9 @@ const DietPage = () => {
                   ) : (
                     <button 
                       onClick={() => navigate(`/diet/add?type=${type}`)} 
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all active:scale-95
-                        ${type === '간식' && hasData ? 'bg-orange-500 shadow-orange-900/40' : 'bg-blue-600 shadow-blue-900/40'}`}
+                      className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-900/40 hover:scale-105 active:scale-95 transition-all"
                     >
-                      <Plus size={20} className="text-white" />
+                      <Plus size={20} />
                     </button>
                   )}
                 </div>
@@ -141,8 +129,6 @@ const DietPage = () => {
             );
           })}
         </div>
-
-        
       </div>
     </div>
   );
