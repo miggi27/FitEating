@@ -24,8 +24,8 @@ origins = [
 # CORS 설정 (기존 유지)
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["*"],
-    allow_origins=origins, # 리액트 주소
+    allow_origins=["*"],
+    # allow_origins=origins, # 리액트 주소
     allow_credentials=True,
     allow_methods=["*"], # 모든 방식(GET, POST 등) 허용
     allow_headers=["*"], # 모든 헤더 허용
