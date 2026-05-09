@@ -16,6 +16,10 @@ class DietLog(Base):
     created_at = Column(DateTime, server_default=func.now()) # 기록 날짜
 
     meal_type = Column(String)  # 아침, 점심, 저녁, 간식
+    # 🟢 추가: 같은 시점에 기록된 음식들을 묶어주는 그룹 키 (예: timestamp string)
+    # 이 키가 같으면 하나의 '간식 묶음'으로 인식합니다.
+    entry_group_id = Column(String, index=True, nullable=True)
+    
     food_name = Column(String)
     
     # 영양 정보 추가

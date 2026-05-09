@@ -6,7 +6,8 @@ import { Plus, RotateCcw, Edit3 } from 'lucide-react';
 
 const DietPage = () => {
   const navigate = useNavigate();
-  
+  const token = localStorage.getItem('token');
+
   // 1. 초기 상태 구조를 백엔드와 완벽히 일치시켜 undefined 방지
   const [summary, setSummary] = useState({ 
     total: { kcal: 0, carbs: 0, protein: 0, fat: 0 }, 
@@ -51,6 +52,32 @@ const DietPage = () => {
     } catch (err) { alert("초기화 실패"); }
   };
 
+  // 1. 고정 식사(아침, 점심, 저녁) 데이터 정리
+  // const fixedMeals = ['아침', '점심', '저녁'].map(type => {
+  //   const items = (summary?.logs || []).filter(l => l.meal_type === type);
+  //   return { type, items, hasData: items.length > 0 };
+  // });
+
+  // // 1. 먼저 logs 변수를 정의합니다.
+  // const logs = summary?.logs || []; 
+  
+  // // 2. 고정 식사(아침, 점심, 저녁) 자리를 만듭니다.
+  // const fixedTypes = ['아침', '점심', '저녁'];
+
+  // // 2. 간식은 entry_group_id별로 묶어서 '각각의 카드'로 만듦
+  // const snackGroups = logs
+  //   .filter(log => log.meal_type === '간식')
+  //   .reduce((acc, log) => {
+  //     // entry_group_id가 없으면 개별 ID라도 사용해서 카드를 분리합니다.
+  //     const gid = log.entry_group_id || `temp-${log.id}`;
+  //     if (!acc[gid]) acc[gid] = [];
+  //     acc[gid].push(log);
+  //     return acc;
+  //   }, {});
+
+  // 고정된 4가지 식사 타입
+  const mealTypes = ['아침', '점심', '저녁', '간식'];
+
   return (
     <div className="h-screen bg-[#09090b] text-zinc-100 overflow-y-auto pb-44 px-4 pt-6">
       <div className="max-w-md mx-auto space-y-6">
@@ -94,55 +121,40 @@ const DietPage = () => {
 
         {/* 식단 리스트 */}
         <div className="space-y-3">
-          {['아침', '점심', '저녁', '간식'].map((type) => {
+          {mealTypes.map((type) => {
+            // 해당 타입의 음식들 필터링
             const meals = (summary?.logs || []).filter(l => l.meal_type === type);
             const hasData = meals.length > 0;
 
             return (
-              <div key={type} className="group relative bg-zinc-900/40 border border-white/5 rounded-[2rem] p-5 flex justify-between items-center hover:bg-zinc-800/50 transition-all">
+              <div key={type} className="group relative bg-zinc-900/40 border border-white/5 rounded-[2rem] p-5 flex justify-between items-center">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{type}</span>
                     {hasData && (
                       <RotateCcw 
                         size={12} 
-                        className="text-zinc-700 hover:text-red-500 cursor-pointer transition-colors" 
+                        className="text-zinc-700 hover:text-red-500 cursor-pointer" 
                         onClick={() => handleReset(type)} 
                       />
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <p className={`text-base font-bold ${hasData ? 'text-white' : 'text-zinc-700 italic'}`}>
-                      {hasData ? meals.map(m => m.food_name).join(', ') : '기록이 없습니다'}
-                    </p>
-                  </div>
+                  <p className={`text-base font-bold ${hasData ? 'text-white' : 'text-zinc-700 italic'}`}>
+                    {hasData ? meals.map(m => m.food_name).join(', ') : '기록이 없습니다'}
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {/* 🟢 [수정 2] 간식은 데이터가 있어도 무조건 Plus 버튼 노출, 나머지는 수정 버튼 노출 */}
-                  {(hasData && type !== '간식') ? (
-                    <button 
-                      onClick={() => navigate(`/diet/add?type=${type}`)} 
-                      className="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-400 flex items-center justify-center hover:text-blue-500 border border-white/5 shadow-inner"
-                    >
-                      <Edit3 size={18} />
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => navigate(`/diet/add?type=${type}`)} 
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all active:scale-95
-                        ${type === '간식' && hasData ? 'bg-orange-500 shadow-orange-900/40' : 'bg-blue-600 shadow-blue-900/40'}`}
-                    >
-                      <Plus size={20} className="text-white" />
-                    </button>
-                  )}
-                </div>
+                <button 
+                  onClick={() => navigate(`/diet/add?type=${type}`)} 
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/5 shadow-lg transition-all active:scale-95
+                    ${hasData ? 'bg-zinc-800 text-zinc-400' : 'bg-blue-600 text-white'}`}
+                >
+                  {hasData ? <Edit3 size={18} /> : <Plus size={20} />}
+                </button>
               </div>
             );
           })}
         </div>
-
-        
       </div>
     </div>
   );

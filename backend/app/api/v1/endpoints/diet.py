@@ -18,24 +18,60 @@ from app.models.diet_log import DietLog
 router = APIRouter()
 
 # 🟢 누락되었던 검색 함수 다시 추가 (FOOD_MASTER_DF 검색용)
-def search_food_nutrition(name: str):
-    """공공데이터 DF에서 음식 이름으로 영양성분 검색"""
-    if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
-        return None
+# def search_food_nutrition(name: str):
+#     """공공데이터 DF에서 음식 이름으로 영양성분 검색"""
+#     if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
+#         return None
         
-    # 텍스트가 포함된 음식 찾기
-    result = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)]
+#     # 1. 일단 검색어가 포함된 모든 데이터를 가져옵니다.
+#     results = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)].copy()
     
-    if not result.empty:
-        row = result.iloc[0]
-        return {
-            "food_name": row["식품명"],
-            "kcal": float(row["에너지(kcal)"]),
-            "carbs": float(row["탄수화물(g)"]),
-            "protein": float(row["단백질(g)"]),
-            "fat": float(row["지방(g)"])
-        }
-    return None
+#     if not results.empty:
+#         # 2. 이름의 길이를 계산해서 새 컬럼에 넣기
+#         results['name_len'] = results['식품명'].str.len()
+        
+#         # 3. 이름 길이가 가장 짧은 순서대로 정렬 (불고기 > 꿩불고기 > 서울식불고기전골...)
+#         results_sorted = results.sort_values(by='name_len')
+        
+#         # 4. 가장 짧은 놈 선택
+#         row = results_sorted.iloc[0]
+
+#         return {
+#             "food_name": row["식품명"],
+#             "kcal": float(row["에너지(kcal)"]),
+#             "carbs": float(row["탄수화물(g)"]),
+#             "protein": float(row["단백질(g)"]),
+#             "fat": float(row["지방(g)"])
+#         }
+#     return None
+
+def search_food_nutrition(name: str):
+    if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
+        return []
+        
+    # 1. 포함된 모든 데이터 검색
+    results = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)].copy()
+    
+    if not results.empty:
+        # 2. 이름 짧은 순으로 정렬하여 상위 10개만 추출
+        results['name_len'] = results['식품명'].str.len()
+        top_10 = results.sort_values(by='name_len').head(10)
+        
+        output = []
+        for _, row in top_10.iterrows():
+            output.append({
+                "food_name": row["식품명"],
+                "kcal": float(row["에너지(kcal)"]),
+                "carbs": float(row["탄수화물(g)"]),
+                "protein": float(row["단백질(g)"]),
+                "fat": float(row["지방(g)"])
+            })
+        return output # 이제 리스트를 반환합니다!
+    return []
+
+@router.get("/search-nutrition")
+def search_nutrition_api(name: str):
+    return search_food_nutrition(name) # 리스트가 프론트로 전송됨
 
 # 경로 설정
 CURRENT_FILE_PATH = os.path.abspath(__file__)
@@ -171,35 +207,39 @@ async def analyze_food(file: UploadFile = File(...)):
 
 # 🟢 저장 API 수정
 @router.post("/record-many")
-def record_many_diet(data: dict, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def record_many_diet(
+    data: dict, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
     items = data.get("items", [])
     meal_type = data.get("meal_type")
+    image_url = data.get("image_url")
+    # 🟢 프론트에서 보낸 즐겨찾기 체크 여부 (isFavSet 값)
+    save_as_fav = 1 if data.get("save_as_favorite") else 0
     today = date.today()
 
-    # 기존 기록 삭제 (수정/업데이트 대응)
+    # 1. 기존 같은 끼니 데이터 삭제 (수정 모드 대응)
     db.query(DietLog).filter(
         DietLog.user_id == current_user.id, 
         DietLog.date == today, 
         DietLog.meal_type == meal_type
     ).delete()
 
+    # 2. 새로운 데이터 등록
     for item in items:
-        # 🟢 무게(weight) 반영 로직
-        # 사용자가 입력한 무게가 있으면 사용하고, 없으면 기본값 100g
-        input_w = float(item.get("weight", 100))
-        ratio = input_w / 100.0  # 공공데이터 기준인 100g 대비 비율
-
         new_log = DietLog(
             user_id=current_user.id,
             food_name=item.get("food_name"),
-            # 기준값에 무게 비율(ratio)을 곱해서 실제 섭취량으로 저장
-            calories=float(item.get("calories", 0)) * ratio,
-            carbs=float(item.get("carbs", 0)) * ratio,
-            protein=float(item.get("protein", 0)) * ratio,
-            fat=float(item.get("fat", 0)) * ratio,
-            weight=input_w,
+            calories=item.get("calories", 0),
+            carbs=item.get("carbs", 0),
+            protein=item.get("protein", 0),
+            fat=item.get("fat", 0),
+            weight=item.get("weight", 100),  # 이제 에러 안 남
             meal_type=meal_type,
-            date=today
+            image_url=image_url,
+            date=today,  # 모델의 컬럼명이 date이므로 수정
+            is_favorite=save_as_fav  # 🟢 이 줄이 있어야 DB에 1이 들어갑니다!
         )
         db.add(new_log)
     
@@ -213,14 +253,15 @@ def get_daily_summary(db: Session = Depends(get_db), current_user: User = Depend
         DietLog.date == date.today()
     ).all()
 
-    # 무게가 이미 반영되어 저장된 수치들을 합산
+    # 🟢 무게(weight)를 반영한 정확한 합산 로직
+    # DB의 calories가 100g 기준이라면 (val * weight / 100)을 해야 합니다.
     total_data = {
-        "kcal": sum(l.calories for l in logs),
-        "carbs": sum(l.carbs for l in logs),
-        "protein": sum(l.protein for l in logs),
-        "fat": sum(l.fat for l in logs)
+        "kcal": sum((l.calories * (l.weight / 100.0)) for l in logs),
+        "carbs": sum((l.carbs * (l.weight / 100.0)) for l in logs),
+        "protein": sum((l.protein * (l.weight / 100.0)) for l in logs),
+        "fat": sum((l.fat * (l.weight / 100.0)) for l in logs)
     }
-
+    # ⚠️ 수정/복원 기능을 위해 로그 원본(logs)은 절대 가공하지 않고 그대로 보냅니다.
     return {
         "total": total_data, 
         "logs": logs

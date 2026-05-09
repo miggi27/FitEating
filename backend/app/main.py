@@ -15,11 +15,17 @@ app = FastAPI()
 # 테이블 생성 (이 한 줄이 모든 모델의 테이블을 test.db에 만듭니다)
 Base.metadata.create_all(bind=engine)
 
+# 2. 허용할 Origin(프론트엔드 주소) 목록 작성
+origins = [
+    "http://localhost:5173",  # 리액트 Vite 기본 포트
+    "http://127.0.0.1:5173",
+]
+
 # CORS 설정 (기존 유지)
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["*"],
-    allow_origins=["http://localhost:5173"], # 리액트 주소
+    allow_origins=["*"],
+    # allow_origins=origins, # 리액트 주소
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
