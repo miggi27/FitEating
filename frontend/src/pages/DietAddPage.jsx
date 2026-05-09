@@ -250,7 +250,7 @@ const DietAddPage = () => {
     newFoods[index] = {
       ...newFoods[index],
       food_name: foodData.food_name,
-      calories: foodData.calories,
+      calories: foodData.kcal,
       carbs: foodData.carbs,
       protein: foodData.protein,
       fat: foodData.fat,
@@ -332,7 +332,7 @@ const DietAddPage = () => {
                 
                 {/* 드롭다운 UI: 현재 수정 중인 줄(i)일 때만 표시 */}
                 {dropdownList.index === i && dropdownList.results.length > 0 && (
-                  <div className="absolute left-0 top-full z-[999] w-full bg-[#1c1c22] border border-blue-500/30 rounded-xl mt-2 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-h-60 overflow-y-auto">
+                  <div className="absolute left-0 top-full z-[999] w-full bg-[#1c1c22] border border-blue-500/30 rounded-xl mt-2 shadow-[0_10px_40px_rgba(0,0,0,0.2)] max-h-60 overflow-y-auto">
                     {dropdownList.results.map((item, idx) => (
                       <div 
                         key={idx}
