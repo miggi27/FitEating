@@ -276,6 +276,47 @@ const DietAddPage = () => {
     setShowFavs(false); // 창 닫기
   };
 
+  // 2. 저장 함수 수정 (말줄임표 제거 및 필드명 매칭)
+const handleSave = async () => {
+  const token = localStorage.getItem('token');
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type');
+  const groupId = params.get('group');
+
+  // 음식 이름이 있는 것만 필터링
+  const finalFoods = foods.filter(f => f.food_name && f.food_name.trim() !== "");
+
+  if (finalFoods.length === 0) {
+    alert("기록할 음식을 입력해주세요.");
+    return;
+  }
+
+  const payload = {
+    meal_type: type,
+    group_id: groupId,
+    items: finalFoods.map(f => ({
+      food_name: f.food_name,
+      calories: f.calories, // 🟢 f.kcal 대신 f.calories 사용
+      carbs: f.carbs,
+      protein: f.protein,
+      fat: f.fat,
+      weight: f.weight
+    })),
+    image_url: preview, // 사진 주소 포함
+    save_as_favorite: isFavSet
+  };
+
+  try {
+    await axios.post(`${API_BASE_URL}/diet/record-many`, payload, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    navigate('/diet');
+  } catch (err) {
+    console.error("저장 실패:", err);
+    alert("식단 저장 중 오류가 발생했습니다.");
+  }
+};
+
   return (
     <div className="h-screen bg-[#0c0c0e] text-white overflow-y-auto pb-40">
       <div className="flex justify-between items-center p-4 border-b border-white/5">
@@ -379,7 +420,12 @@ const DietAddPage = () => {
             </div>
           </div>
           {/* --- 음식 세트 저장 버튼 --- */}
-          <button onClick={handleFinalSave} className="w-full py-5 bg-blue-600 text-white font-black uppercase text-[12px] tracking-[0.2em] rounded-2xl active:scale-95 transition-all">식단 상세 저장 완료</button>
+          <button 
+            onClick={handleSave} 
+            className="w-full py-5 bg-blue-600 text-white font-black uppercase text-[12px] tracking-[0.2em] rounded-2xl active:scale-95 transition-all"
+          >
+            식단 상세 저장 완료
+          </button>
         </div>
 
         {/* --- AI 영양 피드백 구간 --- */}

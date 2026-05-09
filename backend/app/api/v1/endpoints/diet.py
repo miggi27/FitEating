@@ -212,39 +212,55 @@ def record_many_diet(
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
+    # 1. 프론트엔드에서 보낸 데이터 안전하게 꺼내기
     items = data.get("items", [])
     meal_type = data.get("meal_type")
-    image_url = data.get("image_url")
-    # 🟢 프론트에서 보낸 즐겨찾기 체크 여부 (isFavSet 값)
-    save_as_fav = 1 if data.get("save_as_favorite") else 0
+    group_id = data.get("group_id") 
+    image_url = data.get("image_url")  # 🟢 정의되지 않았던 변수 해결
+    save_as_fav = data.get("save_as_favorite", False) # 🟢 정의되지 않았던 변수 해결
+    
     today = date.today()
 
-    # 1. 기존 같은 끼니 데이터 삭제 (수정 모드 대응)
-    db.query(DietLog).filter(
-        DietLog.user_id == current_user.id, 
-        DietLog.date == today, 
-        DietLog.meal_type == meal_type
-    ).delete()
+    try:
+        # 2. 기존 데이터 삭제 (수정 모드 대응)
+        if meal_type in ['아침', '점심', '저녁']:
+            db.query(DietLog).filter(
+                DietLog.user_id == current_user.id, 
+                DietLog.date == today, 
+                DietLog.meal_type == meal_type
+            ).delete()
+        else: # 간식일 때
+            if group_id:
+                db.query(DietLog).filter(
+                    DietLog.user_id == current_user.id,
+                    DietLog.entry_group_id == group_id
+                ).delete()
 
-    # 2. 새로운 데이터 등록
-    for item in items:
-        new_log = DietLog(
-            user_id=current_user.id,
-            food_name=item.get("food_name"),
-            calories=item.get("calories", 0),
-            carbs=item.get("carbs", 0),
-            protein=item.get("protein", 0),
-            fat=item.get("fat", 0),
-            weight=item.get("weight", 100),  # 이제 에러 안 남
-            meal_type=meal_type,
-            image_url=image_url,
-            date=today,  # 모델의 컬럼명이 date이므로 수정
-            is_favorite=save_as_fav  # 🟢 이 줄이 있어야 DB에 1이 들어갑니다!
-        )
-        db.add(new_log)
-    
-    db.commit()
-    return {"message": "Success"}
+        # 3. 새로운 데이터 등록
+        for item in items:
+            new_log = DietLog(
+                user_id=current_user.id,
+                food_name=item.get("food_name"),
+                calories=item.get("calories", 0),
+                carbs=item.get("carbs", 0),
+                protein=item.get("protein", 0),
+                fat=item.get("fat", 0),
+                weight=item.get("weight", 100),
+                meal_type=meal_type,
+                entry_group_id=group_id, # 🟢 간식 그룹화를 위해 추가
+                image_url=image_url,     # 🟢 이제 에러 안 남
+                date=today,
+                is_favorite=1 if save_as_fav else 0 # 🟢 boolean을 int(0/1)로 변환
+            )
+            db.add(new_log)
+        
+        db.commit()
+        return {"status": "success", "message": "식단이 성공적으로 저장되었습니다."}
+        
+    except Exception as e:
+        db.rollback()
+        print(f"❌ 저장 중 서버 에러: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/daily-summary")
 def get_daily_summary(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
