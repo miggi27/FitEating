@@ -887,20 +887,8 @@ def render_radar_chart(scores, total_score):
     fig.update_layout(
         polar=dict(
             bgcolor="#fafafa",
-            radialaxis=dict(
-                visible=True,
-                range=[0, 100],
-                tickvals=[20, 40, 60, 80, 100],
-                tickfont=dict(size=10, color="#888"),
-                gridcolor="#dcdcdc",
-                angle=90,
-                tickangle=90,
-            ),
-            angularaxis=dict(
-                tickfont=dict(size=12, color="#222"),
-                gridcolor="#dcdcdc",
-                linecolor="#bbbbbb",
-            ),
+            radialaxis=dict(visible=True, range=[0, 100], tickvals=[20, 40, 60, 80, 100], tickfont=dict(size=10, color="#888"), gridcolor="#dcdcdc", angle=90, tickangle=90, ),
+            angularaxis=dict(tickfont=dict(size=12, color="#222"), gridcolor="#dcdcdc", linecolor="#bbbbbb"),
         ),
         showlegend=False,
         margin=dict(l=40, r=40, t=30, b=30),
@@ -924,14 +912,7 @@ def render_radar_chart(scores, total_score):
 
 def render_gymscore_feedback(result, exercise_name, score, significant, event_groups, penalty_per_type):
     cat_scores = compute_category_scores(event_groups, significant, result, penalty_per_type)
-    overall, top_pct = build_overall_review(
-        exercise_name,
-        score,
-        result.get("rep_count", 0),
-        cat_scores,
-        significant,
-        event_groups,
-    )
+    overall, top_pct = build_overall_review(exercise_name, score, result.get("rep_count", 0), cat_scores, significant, event_groups)
 
     st.markdown("---")
     st.markdown(f"### Top {top_pct}% 리프터")

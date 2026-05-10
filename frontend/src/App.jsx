@@ -50,7 +50,7 @@ const AppContent = () => {
             <TopNavbar s={s} />
             <main className="flex-1 relative overflow-hidden flex justify-center">
               <Routes>
-                <Route path="/" element={<Navigate to="/exercise" replace />} />
+                <Route path="/" element={<Navigate to="/Dashboard" replace />} />
                 <Route path="/exercise" element={<ExercisePage theme={theme} />} />
                 <Route path="/exercise/:exId" element={<ExercisePage theme={theme} />} />
                 <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} />
