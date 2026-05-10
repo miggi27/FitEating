@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import TopNavbar from "./components/TopNavbar";
 import Navbar from "./components/Navbar";
+import ExerciseSelectPage from "./pages/ExerciseSelectPage";
 import ExercisePage from "./pages/ExercisePage";
 import DietPage from "./pages/DietPage";
 import BlogPage from "./pages/BlogPage";
@@ -51,9 +52,11 @@ const AppContent = () => {
             <main className="flex-1 relative overflow-hidden flex justify-center">
               <Routes>
                 <Route path="/" element={<Navigate to="/Dashboard" replace />} />
-                <Route path="/exercise" element={<ExercisePage theme={theme} />} />
+                <Route path="/Exercise" element={<ExerciseSelectPage theme={theme} />} />
+                {/* <Route path="/exercise" element={<ExercisePage theme={theme} />} /> */}
                 <Route path="/exercise/:exId" element={<ExercisePage theme={theme} />} />
-                <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} />
+                {/* <Route path="/exercise/:exId/ANALYSIS" element={<ExercisePage theme={theme} />} /> */}
+                {/* <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} /> */}
                 <Route path="/diet" element={<DietPage theme={theme} />} />
                 <Route path="/diet/add" element={<DietAddPage />} />
                 <Route path="/blog" element={<BlogPage theme={theme} />} />

@@ -6,7 +6,7 @@ from sqladmin import Admin, ModelView
 from app.database import engine, Base
 from app.models.user import User
 from app.models.diet_log import DietLog
-from app.models.exercise import WorkoutLog
+from app.models.exercise_log import WorkoutLog
 # 기존 라우터들
 from app.api.v1.endpoints import exercise, diet, auth
 

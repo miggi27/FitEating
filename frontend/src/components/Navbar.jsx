@@ -20,7 +20,7 @@ const Navbar = ({ s }) => {
   return (
     <nav className={`h-20 ${s.nav} border-t ${s.border} flex items-center justify-around px-4 z-[100] shadow-lg`}>
       <NavButton to="/blog" icon={<BookText size={22} />} label="Blog" />
-      <NavButton to="/exercise" icon={<Dumbbell size={22} />} label="Workout" />
+      <NavButton to="/Exercise" icon={<Dumbbell size={22} />} label="Workout" />
       <NavButton to="/diet" icon={<Utensils size={22} />} label="Diet" />
       <NavButton to="/settings" icon={<SettingsIcon size={22} />} label="Set" />
     </nav>

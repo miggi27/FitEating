@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import numpy as np
+from fastapi import APIRouter
+import os
+from app.core.constants import EXERCISE_CATEGORIES, CAMERA_GUIDE, FEEDBACK_MESSAGES, GUIDE_IMAGES
 
 router = APIRouter()
 
@@ -18,20 +21,41 @@ EXERCISE_MODEL_PATHS = {
     "데드리프트": "./models/exercise/deadlift.pkl",
 }
 
-CAMERA_GUIDE = {
-    "벤치프레스": "정면에서 촬영하세요. 카메라를 발 아래쪽에 두고 바가 정면으로 보이도록 배치하면 그립 너비와 허리 아치를 판정하기 좋습니다.",
-    "스쿼트": "측면에서 촬영하세요. 무릎·허리 라인이 한눈에 보이게 옆에서 찍어야 무릎 안쪽 꺾임과 척추 각도를 판정할 수 있습니다.",
-    "데드리프트": "측면에서 촬영하세요. 바·허리·무릎이 한 라인에 들어오도록 옆면을 잡으면 척추 중립 여부를 판정하기 좋습니다.",
-}
+@router.get("/list")
+async def get_exercise_list():
+    """부위별 운동 목록과 각 운동별 상세 가이드(사진 경로 포함) 반환"""
+    return {
+        "categories": EXERCISE_CATEGORIES,
+        "guides": CAMERA_GUIDE,
+        # 프론트엔드 assets 폴더와 매칭될 이미지 파일명
+        "images": {
+            "스쿼트": "squat_guide.jpg",
+            "벤치프레스": "bench_guide.jpg",
+            "데드리프트": "dead_guide.jpg",
+            # ...
+        }
+    }
 
-FEEDBACK_MESSAGES = {
-    "excessive_arch": "허리가 과도한 아치 자세입니다. 허리를 너무 아치 모양으로 만들지 말고 가슴을 피려고 노력하세요. 골반을 조금 더 들어올리고 복부를 긴장시켜 허리를 평평하게 유지하세요.",
-    "arms_spread": "바를 너무 넓게 잡은 자세입니다. 어깨 너비보다 약간만 넓게 잡는 것이 좋습니다.",
-    "arms_narrow": "바를 너무 좁게 잡은 자세입니다. 어깨 너비보다 조금 넓게 잡는 것이 좋습니다.",
-    "spine_neutral": "척추가 중립이 아닌 자세입니다. 척추가 과도하게 굽지 않도록 가슴을 들어올리고 어깨를 뒤로 넣으세요.",
-    "caved_in_knees": "무릎이 움푹 들어간 자세입니다. 엉덩이를 뒤로 빼서 무릎과 발끝을 일직선으로 유지하세요.",
-    "feet_spread": "발을 너무 넓게 벌린 자세입니다. 발을 어깨 너비 정도로만 벌리도록 좁히세요.",
-}
+# 3. 가이드 이미지 경로 설정
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+GUIDE_IMAGES_DIR = os.path.join(BASE_DIR, "data", "guide_images")
+
+@router.get("/exercises")
+async def get_exercises():
+    """프론트엔드에서 부위별 운동 선택창을 만들 때 사용"""
+    return {
+        "categories": EXERCISE_CATEGORIES,
+        "guides": CAMERA_GUIDE
+    }
+
+@router.get("/info")
+async def get_exercise_info():
+    """모든 운동 카테고리, 가이드 문구, 이미지 경로를 한 번에 전달"""
+    return {
+        "categories": EXERCISE_CATEGORIES,
+        "guides": CAMERA_GUIDE,
+        "images": GUIDE_IMAGES
+    }
 
 ERROR_KEYS = list(FEEDBACK_MESSAGES.keys())
 

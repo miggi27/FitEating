@@ -9,6 +9,7 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
   const canvasRef = useRef(null);
   const poseInstance = useRef(null);
   const latestData = useRef(null);
+  const workoutImage = useRef(null); // 운동 확인용 사진 저장소
   
   // 🔥 실시간 피드백을 프레임마다 유지하기 위한 Ref
   const feedbackRef = useRef(null);
@@ -55,21 +56,45 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
       try {
         const res = await axios.post(`${API_BASE_URL}/exercise/analyze`, { landmarks, exercise_type: exercise });
         const data = res.data; // 이제 res가 정의되었으므로 에러 안 남!
-        latestData.current = data;
+        // latestData.current = data;
+        // if (data.error_key && data.feedback_points) {
+        //   // 캡처용 사진 생성
+        //   data.capture_url = canvas.toDataURL("image/jpeg", 0.7);
+        //   // 서버에서 새로운 에러를 받으면 Ref 갱신
+        //   feedbackRef.current = { points: data.feedback_points, msg: data.overlay_message };
+        // } else {
+        //   feedbackRef.current = null;
+        // }
 
-        if (data.error_key && data.feedback_points) {
-          // 서버에서 새로운 에러를 받으면 Ref 갱신
-          feedbackRef.current = { points: data.feedback_points, msg: data.overlay_message };
-          // 캡처용 사진 생성
-          data.capture_url = canvas.toDataURL("image/jpeg", 0.6);
-        } else {
-          feedbackRef.current = null;
+        // 💡 [핵심 반영] 성능 저하 없이 '확인용 사진' 한 장만 찍어둠
+        // 횟수가 1회 이상이 되거나 영상이 어느 정도 진행되었을 때 딱 한 번만 캡처
+        if (!workoutImage.current && (data.counter > 0 || videoRef.current.currentTime > 2)) {
+          workoutImage.current = canvas.toDataURL("image/jpeg", 0.4); // 용량 최소화 (0.4)
+        }
+        
+        latestData.current = data; // 마지막 결과값 업데이트
+        onResultUpdate(data);
+        
+        // 영상이 끝나면 이 'data'가 그대로 FeedbackDetail로 넘어감
+        if (videoRef.current.ended) {
+          onAnalysisComplete(data);
         }
 
         onResultUpdate(data);
       } catch (err) { console.error(err); }
     }
   }
+
+  const handleFinalize = () => {
+    if (latestData.current) {
+      // 💡 마지막 결과 데이터에 '운동 확인용 사진'을 강제로 포함시켜 보냄
+      const finalResult = {
+        ...latestData.current,
+        capture_url: workoutImage.current || latestData.current.capture_url
+      };
+      onAnalysisComplete(finalResult);
+    }
+  };
 
   function drawError(ctx, x, y, msg) {
     ctx.save();
@@ -91,7 +116,14 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
   return (
     <div className="w-full h-full flex items-center justify-center bg-black">
       <canvas ref={canvasRef} className="max-w-full max-h-full object-contain" />
-      <video ref={videoRef} onPlay={onFrame} onEnded={() => onAnalysisComplete(latestData.current)} className="hidden" muted playsInline />
+      <video 
+        ref={videoRef} 
+        onPlay={onFrame} 
+        onEnded={handleFinalize} // 💡 수정된 핸들러
+        className="hidden" 
+        muted 
+        playsInline 
+      />
     </div>
   );
 });

@@ -55,19 +55,21 @@ const FeedbackDetail = ({ result, exerciseName, theme, onReset, onSaveToBlog }) 
       {/* 2. 시각적 분석: 캡처 & 레이더 차트 */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className={`relative aspect-video md:aspect-square rounded-[35px] border ${s.card} shadow-2xl overflow-hidden bg-black flex items-center justify-center`}>
-          {/* 🔥 result.capture_url이 있으면 이미지를, 없으면 로딩 메시지 */}
+          {/* 💡 운동 캡쳐 사진 출력 구역 */}
           {result.capture_url ? (
-            <img 
-              src={result.capture_url} 
-              alt="Analysis Result" 
-              className="w-full h-full object-contain"
-              onLoad={() => console.log("이미지 로드 완료!")}
-              onError={(e) => console.error("이미지 로드 실패:", result.capture_url)}
-            />
+            <div className="w-full rounded-[2.5rem] overflow-hidden border-4 border-red-500/30 shadow-2xl mb-6">
+              <img 
+                src={result.capture_url} 
+                alt="Bad Form Capture" 
+                className="w-full h-auto object-cover"
+              />
+              <div className="bg-red-500 text-white text-center py-3 font-black uppercase tracking-widest text-xs">
+                ⚠️ 분석된 잘못된 자세 캡쳐
+              </div>
+            </div>
           ) : (
-            <div className="flex flex-col items-center gap-3 text-slate-500 italic p-10 text-center">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p>AI가 분석 이미지를 생성하고 있습니다...</p>
+            <div className="w-full h-48 bg-white/5 rounded-[2.5rem] flex items-center justify-center border border-dashed border-white/10 mb-6">
+              <p className="text-slate-500 text-sm">감지된 자세 교정 포인트가 없습니다.</p>
             </div>
           )}
         </div>

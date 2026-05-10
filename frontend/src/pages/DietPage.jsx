@@ -46,8 +46,7 @@ const DietPage = () => {
 
   return (
     // 💡 해결: 최상위 컨테이너 구조를 DietAddPage와 완벽하게 일치시킴
-    <div className="fixed inset-0 bg-[#0c0c0e] text-white overflow-y-scroll" style={{ scrollbarGutter: 'stable' }}>
-      
+    <div className="fixed inset-0 bg-[#0c0c0e] text-white overflow-y-scroll" style={{ scrollbarGutter: 'stable' }}>      
       <div className="w-full max-w-6xl mx-auto min-h-screen flex flex-col">
         
         {/* 상단 헤더: 수정 페이지와 높이 및 여백 일치 */}
