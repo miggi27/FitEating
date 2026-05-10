@@ -10,6 +10,9 @@ from app.models.exercise_log import WorkoutLog
 # 기존 라우터들
 from app.api.v1.endpoints import exercise, diet, auth
 
+from pydantic import BaseModel  # 추가
+import httpx
+
 app = FastAPI()
 
 # 테이블 생성 (이 한 줄이 모든 모델의 테이블을 test.db에 만듭니다)
@@ -70,3 +73,45 @@ app.include_router(diet.router, prefix="/api/v1/diet", tags=["diet"])
 @app.get("/")
 def read_root():
     return {"status": "online", "message": "Fit-Eating API Server"}
+
+# 1. 데이터를 받을 구조 정의 (프론트에서 보낸 키값과 일치해야 함)
+class FeedbackRequest(BaseModel):
+    workout_data: str = ""
+    food_data: str = ""
+    type: str = "DEFAULT"  # 👈 이렇게 기본값을 주면 에러(422)를 방지할 수 있습니다.
+
+@app.post("/ai-feedback")
+async def get_feedback(data: FeedbackRequest):  # data 객체로 받음
+    # 1. 페이지 타입별 프롬프트 사전(Dictionary) 정의
+    prompts = {
+        # 전체 식단 페이지용
+        "TOTAL_DIET": f"너는 영양사야. 오늘의 전체 영양소({data.food_data})를 보고 하루 총평을 2줄로 해줘.",
+        
+        # 아침 식사 전용 (아침에 맞는 조언)
+        "BREAKFAST": f"너는 식단 코치야. 아침 식사({data.food_data}) 구성을 보고 하루의 시작을 위한 피드백을 2줄로 해줘.",
+        
+        # 운동 결과 페이지용
+        "EXERCISE_RESULT": f"너는 전문 트레이너야. 방금 마친 {data.workout_data} 기록을 보고 자세나 강도에 대해 2줄로 칭찬해줘.",
+        
+        # 메인 대시보드용 (종합 피드백)
+        "DASHBOARD": f"너는 건강 관리사야. 오늘의 운동({data.workout_data})과 식단({data.food_data})을 종합해서 짧게 한마디 해줘."
+    }
+
+    # 2. 전송된 type에 맞는 프롬프트 선택 (없으면 기본 프롬프트)
+    selected_prompt = prompts.get(data.type, "너는 건강 도우미야. 데이터에 대해 짧게 조언해줘.")
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "gemma3:4b",
+                    "prompt": selected_prompt,
+                    "stream": False
+                },
+                timeout=60.0
+            )
+            result = response.json()
+            return {"feedback": result['response']}
+        except Exception as e:
+            return {"feedback": f"Ollama 연결 실패: {str(e)}"}

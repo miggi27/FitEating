@@ -81,13 +81,13 @@ const ExercisePage = ({ theme }) => {
               <div className="absolute bottom-12 left-12 right-12 z-40 pointer-events-none flex justify-between items-end">
                 <div className="flex flex-col">
                   <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest mb-2">Count</span>
-                  <span className="text-9xl font-black text-white italic leading-none drop-shadow-2xl">
+                  <span className="text-5xl font-black text-white italic leading-none drop-shadow-2xl">
                     {String(analysisResult.counter || 0).padStart(2, '0')}
                   </span>
                 </div>
                 <div className="text-right pb-4">
                   <span className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Angle</span>
-                  <span className="text-5xl font-black text-white drop-shadow-lg">{Math.round(analysisResult.angle)}°</span>
+                  <span className="text-3xl font-black text-white drop-shadow-lg">{Math.round(analysisResult.angle)}°</span>
                 </div>
               </div>
             )}
