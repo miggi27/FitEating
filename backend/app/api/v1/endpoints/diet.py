@@ -17,34 +17,6 @@ from app.models.diet_log import DietLog
 
 router = APIRouter()
 
-# 🟢 누락되었던 검색 함수 다시 추가 (FOOD_MASTER_DF 검색용)
-# def search_food_nutrition(name: str):
-#     """공공데이터 DF에서 음식 이름으로 영양성분 검색"""
-#     if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
-#         return None
-        
-#     # 1. 일단 검색어가 포함된 모든 데이터를 가져옵니다.
-#     results = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)].copy()
-    
-#     if not results.empty:
-#         # 2. 이름의 길이를 계산해서 새 컬럼에 넣기
-#         results['name_len'] = results['식품명'].str.len()
-        
-#         # 3. 이름 길이가 가장 짧은 순서대로 정렬 (불고기 > 꿩불고기 > 서울식불고기전골...)
-#         results_sorted = results.sort_values(by='name_len')
-        
-#         # 4. 가장 짧은 놈 선택
-#         row = results_sorted.iloc[0]
-
-#         return {
-#             "food_name": row["식품명"],
-#             "kcal": float(row["에너지(kcal)"]),
-#             "carbs": float(row["탄수화물(g)"]),
-#             "protein": float(row["단백질(g)"]),
-#             "fat": float(row["지방(g)"])
-#         }
-#     return None
-
 def search_food_nutrition(name: str):
     if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
         return []
@@ -76,8 +48,8 @@ def search_nutrition_api(name: str):
 # 경로 설정
 CURRENT_FILE_PATH = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_FILE_PATH))))
-DB_PATH = os.path.join(BASE_DIR, "data", "food_info_utf8.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficientnetb4.pt")
+DB_PATH = os.path.join(BASE_DIR, "data", "food_list.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficient0-11diet.pt")
 YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "yolov8n.pt")
 FOOD_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv")
 PROCESS_CSV = os.path.join(BASE_DIR, "data", "food_master_가공_utf8.csv")
@@ -157,22 +129,32 @@ FOOD_NUTRITION_DB = load_food_db(DB_PATH, FOOD_MASTER_DF)
 # 모델 설정
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 yolo_model = YOLO(YOLO_PATH)
+# 전처리 설정
 classify_transform = transforms.Compose([
-    transforms.Resize((380, 380)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
+# EfficientNet-B0 로드
 def load_classifier(path):
-    model = models.efficientnet_b4(weights=None)
-    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 150)
     try:
-        checkpoint = torch.load(path, map_location=device, weights_only=False)
-        if isinstance(checkpoint, nn.Module): model = checkpoint
-        else: model.load_state_dict(checkpoint.get('state_dict', checkpoint))
-    except: pass
-    model.to(device).eval()
-    return model
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"모델 파일이 없습니다: {path}")
+            
+        # .pt 파일 전체 로드 (weights_only=False)
+        model = torch.load(path, map_location=device, weights_only=False)
+        model.to(device)
+        model.eval()
+        print(f"✅ [성공] {os.path.basename(path)} 모델 로드 완료!")
+        return model
+    except Exception as e:
+        print(f"⚠️ [주의] 모델 로드 실패, 기본 구조 생성: {e}")
+        model = models.efficientnet_b0(weights=None)
+        model.classifier[1] = nn.Linear(model.classifier[1].in_features, 150)
+        model.to(device)
+        model.eval()
+        return model
 
 classifier = load_classifier(MODEL_PATH)
 
