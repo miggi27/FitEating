@@ -12,6 +12,7 @@ from app.api.v1.endpoints import exercise, diet, auth
 
 from pydantic import BaseModel  # 추가
 import httpx
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -69,6 +70,7 @@ admin.add_view(WorkoutLogAdmin)
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(exercise.router, prefix="/api/v1/exercise", tags=["exercise"])
 app.include_router(diet.router, prefix="/api/v1/diet", tags=["diet"])
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def read_root():

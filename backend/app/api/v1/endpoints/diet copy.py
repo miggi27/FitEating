@@ -17,31 +17,39 @@ from app.models.diet_log import DietLog
 
 router = APIRouter()
 
-# 🟢 누락되었던 검색 함수 다시 추가 (FOOD_MASTER_DF 검색용)
 def search_food_nutrition(name: str):
-    """공공데이터 DF에서 음식 이름으로 영양성분 검색"""
     if FOOD_MASTER_DF is None or FOOD_MASTER_DF.empty:
-        return None
+        return []
         
-    # 텍스트가 포함된 음식 찾기
-    result = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)]
+    # 1. 포함된 모든 데이터 검색
+    results = FOOD_MASTER_DF[FOOD_MASTER_DF["식품명"].str.contains(name, na=False)].copy()
     
-    if not result.empty:
-        row = result.iloc[0]
-        return {
-            "food_name": row["식품명"],
-            "kcal": float(row["에너지(kcal)"]),
-            "carbs": float(row["탄수화물(g)"]),
-            "protein": float(row["단백질(g)"]),
-            "fat": float(row["지방(g)"])
-        }
-    return None
+    if not results.empty:
+        # 2. 이름 짧은 순으로 정렬하여 상위 10개만 추출
+        results['name_len'] = results['식품명'].str.len()
+        top_10 = results.sort_values(by='name_len').head(10)
+        
+        output = []
+        for _, row in top_10.iterrows():
+            output.append({
+                "food_name": row["식품명"],
+                "kcal": float(row["에너지(kcal)"]),
+                "carbs": float(row["탄수화물(g)"]),
+                "protein": float(row["단백질(g)"]),
+                "fat": float(row["지방(g)"])
+            })
+        return output # 이제 리스트를 반환합니다!
+    return []
+
+@router.get("/search-nutrition")
+def search_nutrition_api(name: str):
+    return search_food_nutrition(name) # 리스트가 프론트로 전송됨
 
 # 경로 설정
 CURRENT_FILE_PATH = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_FILE_PATH))))
-DB_PATH = os.path.join(BASE_DIR, "data", "food_info_utf8.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficientnetb4.pt")
+DB_PATH = os.path.join(BASE_DIR, "data", "food_list.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficient0-11diet.pt")
 YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "yolov8n.pt")
 FOOD_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv")
 PROCESS_CSV = os.path.join(BASE_DIR, "data", "food_master_가공_utf8.csv")
@@ -85,7 +93,7 @@ def load_food_db(path, master_df):
                 
                 # --- [핵심 추가] 공공데이터 DF에서 상세 영양정보 검색 ---
                 # 모델 DB의 음식 이름이 공공데이터 '식품명'에 포함되는지 확인
-                target_nutrition = master_df[master_df["식품명"].str.contains(f_name, na=False)]
+                target_nutrition = master_df[master_df["식품명"].str.contains(f_name, na=False, regex=False)]
                 
                 if not target_nutrition.empty:
                     # 가장 유사한 첫 번째 데이터의 영양성분 가져오기
@@ -121,22 +129,32 @@ FOOD_NUTRITION_DB = load_food_db(DB_PATH, FOOD_MASTER_DF)
 # 모델 설정
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 yolo_model = YOLO(YOLO_PATH)
+# 전처리 설정
 classify_transform = transforms.Compose([
-    transforms.Resize((380, 380)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
+# EfficientNet-B0 로드
 def load_classifier(path):
-    model = models.efficientnet_b4(weights=None)
-    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 150)
     try:
-        checkpoint = torch.load(path, map_location=device, weights_only=False)
-        if isinstance(checkpoint, nn.Module): model = checkpoint
-        else: model.load_state_dict(checkpoint.get('state_dict', checkpoint))
-    except: pass
-    model.to(device).eval()
-    return model
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"모델 파일이 없습니다: {path}")
+            
+        # .pt 파일 전체 로드 (weights_only=False)
+        model = torch.load(path, map_location=device, weights_only=False)
+        model.to(device)
+        model.eval()
+        print(f"✅ [성공] {os.path.basename(path)} 모델 로드 완료!")
+        return model
+    except Exception as e:
+        print(f"⚠️ [주의] 모델 로드 실패, 기본 구조 생성: {e}")
+        model = models.efficientnet_b0(weights=None)
+        model.classifier[1] = nn.Linear(model.classifier[1].in_features, 150)
+        model.to(device)
+        model.eval()
+        return model
 
 classifier = load_classifier(MODEL_PATH)
 
@@ -176,58 +194,116 @@ def record_many_diet(
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
+    # 1. 프론트엔드에서 보낸 데이터 안전하게 꺼내기
     items = data.get("items", [])
     meal_type = data.get("meal_type")
-    image_url = data.get("image_url")
-    # 🟢 프론트에서 보낸 즐겨찾기 체크 여부 (isFavSet 값)
-    save_as_fav = 1 if data.get("save_as_favorite") else 0
+    group_id = data.get("group_id") 
+    image_url = data.get("image_url")  # 🟢 정의되지 않았던 변수 해결
+    save_as_fav = data.get("save_as_favorite", False) # 🟢 정의되지 않았던 변수 해결
+    
     today = date.today()
 
-    # 1. 기존 같은 끼니 데이터 삭제 (수정 모드 대응)
-    db.query(DietLog).filter(
-        DietLog.user_id == current_user.id, 
-        DietLog.date == today, 
-        DietLog.meal_type == meal_type
-    ).delete()
+    try:
+        # 2. 기존 데이터 삭제 (수정 모드 대응)
+        if meal_type in ['아침', '점심', '저녁']:
+            db.query(DietLog).filter(
+                DietLog.user_id == current_user.id, 
+                DietLog.date == today, 
+                DietLog.meal_type == meal_type
+            ).delete()
+        else: # 간식일 때
+            if group_id:
+                db.query(DietLog).filter(
+                    DietLog.user_id == current_user.id,
+                    DietLog.entry_group_id == group_id
+                ).delete()
 
-    # 2. 새로운 데이터 등록
-    for item in items:
-        new_log = DietLog(
-            user_id=current_user.id,
-            food_name=item.get("food_name"),
-            calories=item.get("calories", 0),
-            carbs=item.get("carbs", 0),
-            protein=item.get("protein", 0),
-            fat=item.get("fat", 0),
-            weight=item.get("weight", 100),  # 이제 에러 안 남
-            meal_type=meal_type,
-            image_url=image_url,
-            date=today,  # 모델의 컬럼명이 date이므로 수정
-            is_favorite=save_as_fav  # 🟢 이 줄이 있어야 DB에 1이 들어갑니다!
-        )
-        db.add(new_log)
-    
-    db.commit()
-    return {"message": "Success"}
+        # 3. 새로운 데이터 등록
+        for item in items:
+            new_log = DietLog(
+                user_id=current_user.id,
+                food_name=item.get("food_name"),
+                calories=item.get("calories", 0),
+                carbs=item.get("carbs", 0),
+                protein=item.get("protein", 0),
+                fat=item.get("fat", 0),
+                weight=item.get("weight", 100),
+                meal_type=meal_type,
+                entry_group_id=group_id, # 🟢 간식 그룹화를 위해 추가
+                image_url=image_url,     # 🟢 이제 에러 안 남
+                date=today,
+                is_favorite=1 if save_as_fav else 0 # 🟢 boolean을 int(0/1)로 변환
+            )
+            db.add(new_log)
+        
+        db.commit()
+        return {"status": "success", "message": "식단이 성공적으로 저장되었습니다."}
+        
+    except Exception as e:
+        db.rollback()
+        print(f"❌ 저장 중 서버 에러: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/daily-summary")
 def get_daily_summary(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    logs = db.query(DietLog).filter(DietLog.user_id == current_user.id, DietLog.date == date.today()).all()
-    return {"logs": logs}
+    logs = db.query(DietLog).filter(
+        DietLog.user_id == current_user.id, 
+        DietLog.date == date.today()
+    ).all()
+
+    # 🟢 무게(weight)를 반영한 정확한 합산 로직
+    # DB의 calories가 100g 기준이라면 (val * weight / 100)을 해야 합니다.
+    total_data = {
+        "kcal": sum((l.calories * (l.weight / 100.0)) for l in logs),
+        "carbs": sum((l.carbs * (l.weight / 100.0)) for l in logs),
+        "protein": sum((l.protein * (l.weight / 100.0)) for l in logs),
+        "fat": sum((l.fat * (l.weight / 100.0)) for l in logs)
+    }
+    # ⚠️ 수정/복원 기능을 위해 로그 원본(logs)은 절대 가공하지 않고 그대로 보냅니다.
+    return {
+        "total": total_data, 
+        "logs": logs
+    }
 
 # 🟢 즐겨찾기 목록 가져오기
 @router.get("/favorites")
-def get_favorites(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # 1로 저장된 음식들을 중복 없이 가져옴
-    favs = db.query(DietLog.food_name, DietLog.calories, DietLog.carbs, DietLog.protein, DietLog.fat)\
-             .filter(DietLog.user_id == current_user.id, DietLog.is_favorite == 1)\
-             .group_by(DietLog.food_name).all()
-    
-    # 프론트가 쓰기 편하게 딕셔너리 리스트로 변환
-    return [
-        {"food_name": f[0], "calories": f[1], "carbs": f[2], "protein": f[3], "fat": f[4]} 
-        for f in favs
-    ]
+def get_favorites_categorized(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # 모든 즐겨찾기 데이터를 가져옴
+    fav_logs = db.query(DietLog).filter(
+        DietLog.user_id == current_user.id, 
+        DietLog.is_favorite == 1
+    ).order_by(DietLog.created_at.desc()).all()
+
+    # 결과 구조: { "식사": [세트1, 세트2], "간식": [세트1, 세트2] }
+    result = {"meal": [], "snack": []}
+    sets = {}
+
+    for log in fav_logs:
+        # 사진 경로를 기준으로 세트를 묶음 (사진이 없다면 생성 날짜 분 단위로 묶음)
+        group_key = log.image_url if log.image_url else log.created_at.strftime("%Y-%m-%d %H:%M")
+        
+        if group_key not in sets:
+            sets[group_key] = {
+                "meal_type": log.meal_type,
+                "image_url": log.image_url,
+                "items": []
+            }
+        
+        sets[group_key]["items"].append({
+            "food_name": log.food_name,
+            "calories": log.calories,
+            "carbs": log.carbs,
+            "protein": log.protein,
+            "fat": log.fat,
+            "weight": log.weight
+        })
+
+    # meal_type에 따라 분류 (아침/점심/저녁 -> meal, 간식 -> snack)
+    for key, s in sets.items():
+        category = "snack" if s["meal_type"] == "간식" else "meal"
+        result[category].append(s)
+
+    return result
 
 # 🟢 영양 피드백 생성 (간단 버전)
 @router.post("/feedback")

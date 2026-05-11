@@ -6,6 +6,7 @@ from PIL import Image
 import pandas as pd
 import io
 import os
+import uuid  # 파일명 중복 방지를 위해 상단에 추가
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from datetime import date
@@ -48,11 +49,15 @@ def search_nutrition_api(name: str):
 # 경로 설정
 CURRENT_FILE_PATH = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_FILE_PATH))))
-DB_PATH = os.path.join(BASE_DIR, "data", "food_list.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficient0-11diet.pt")
-YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "yolov8n.pt")
-FOOD_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv")
-PROCESS_CSV = os.path.join(BASE_DIR, "data", "food_master_가공_utf8.csv")
+DB_PATH = os.path.join(BASE_DIR, "data", "food_list.csv") # 클래스인덱스
+MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficient0-11diet.pt") # 음식인식
+YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "yolov8n.pt") # 음식분류
+FOOD_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv") # 칼탄단지 계산용
+PROCESS_CSV = os.path.join(BASE_DIR, "data", "food_master_가공_utf8.csv") # 칼탄단지 계산용
+
+# 저장 경로 설정 (상단 경로 설정 부분에 추가)
+UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads", "food")
+os.makedirs(UPLOAD_DIR, exist_ok=True) # 폴더가 없으면 생성
 print(f"📍 확인된 CSV 경로: {FOOD_CSV}") # 서버 뜰 때 터미널에서 확인용!
 
 def load_and_merge_food_data():
@@ -160,31 +165,72 @@ classifier = load_classifier(MODEL_PATH)
 
 # 분석 API (탄단지 포함 반환)
 @router.post("/analyze")
-async def analyze_food(file: UploadFile = File(...)):
+async def analyze_food(file: UploadFile = File(...)):    
     try:
         image_data = await file.read()
         original_img = Image.open(io.BytesIO(image_data)).convert('RGB')
-        results = yolo_model.predict(original_img, conf=0.25)
-        detected_items = []
+
+        # 1. 전체 원본 이미지 저장 (선택 사항)
+        main_filename = f"{uuid.uuid4()}_main.jpg"
+        main_path = os.path.join(UPLOAD_DIR, main_filename)
+        original_img.save(main_path, "JPEG")
+
+        results = yolo_model.predict(original_img, conf=0.3) # 0.25보다 살짝 높여서 과잉 검출 방지    
+        temp_best_items = {} # { "음식명": { "conf": 0.9, "path": "...", "data": {...} } }
+        
         if results[0].boxes:
-            for box in results[0].boxes:
+            for i, box in enumerate(results[0].boxes):
                 xyxy = box.xyxy[0].tolist()
+                # 2. YOLO가 찾은 영역 쪼개기(Crop)
                 cropped = original_img.crop((xyxy[0], xyxy[1], xyxy[2], xyxy[3]))
+
+                # 3. 쪼개진 이미지 파일로 저장
+                crop_filename = f"{uuid.uuid4()}_{i}.jpg"
+                crop_path = os.path.join(UPLOAD_DIR, crop_filename)
+                cropped.save(crop_path, "JPEG")
+
+                # 분류 모델(EfficientNet) 통과
                 input_tensor = classify_transform(cropped).unsqueeze(0).to(device)
                 with torch.no_grad():
                     output = classifier(input_tensor)
-                    conf, idx = torch.max(torch.nn.functional.softmax(output, dim=1), 1)
+                    # 확률(Softmax)과 인덱스 가져오기
+                    probs = torch.nn.functional.softmax(output, dim=1)
+                    conf_val, idx = torch.max(probs, 1)
+                    current_conf = conf_val.item()
+
                 f_info = FOOD_NUTRITION_DB.get(idx.item())
                 if f_info:
-                    detected_items.append({
-                        "food_name": f_info["name"],
-                        "calories": f_info["kcal"],
-                        "carbs": f_info["carbs"],
-                        "protein": f_info["protein"],
-                        "fat": f_info["fat"]
-                    })
-        return list({item['food_name']: item for item in detected_items}.values())
-    except: raise HTTPException(status_code=500, detail="분석 실패")
+                    food_name = f_info["name"]
+                    
+                    # 🟢 핵심: 이전에 찾은 같은 음식보다 지금 찾은 것의 확신도가 더 높을 때만 교체
+                    if food_name not in temp_best_items or current_conf > temp_best_items[food_name]['conf']:
+                        
+                        # 새 이미지 저장
+                        crop_filename = f"{uuid.uuid4()}.jpg"
+                        crop_path = os.path.join(UPLOAD_DIR, crop_filename)
+                        cropped.save(crop_path, "JPEG")
+                        
+                        # 이전 이미지가 있었다면 삭제 (선택 사항)
+                        # if food_name in temp_best_items: os.remove(temp_best_items[food_name]['full_path'])
+
+                        temp_best_items[food_name] = {
+                            "conf": current_conf,
+                            "data": {
+                                "food_name": food_name,
+                                "calories": f_info["kcal"],
+                                "carbs": f_info["carbs"],
+                                "protein": f_info["protein"],
+                                "fat": f_info["fat"],
+                                "image_url": f"/static/uploads/food/{crop_filename}"
+                            }
+                        }
+        # 중복 제거 로직 (동일 음식명이면 하나만 반환하되 이미지는 유지하거나 선택)
+        # return list({item['food_name']: item for item in detected_items}.values())
+        # 최종 결과만 리스트로 반환
+        return [item['data'] for item in temp_best_items.values()]
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail="분석 실패")
 
 
 # 🟢 저장 API 수정
