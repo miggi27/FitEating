@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, ChevronRight, Info, Moon, Sun, Palette } from 'lucide-react';
 
+
 const ExerciseSelectPage = ({ theme, setTheme }) => {
   const navigate = useNavigate();
 

@@ -93,7 +93,7 @@ def load_food_db(path, master_df):
                 
                 # --- [핵심 추가] 공공데이터 DF에서 상세 영양정보 검색 ---
                 # 모델 DB의 음식 이름이 공공데이터 '식품명'에 포함되는지 확인
-                target_nutrition = master_df[master_df["식품명"].str.contains(f_name, na=False)]
+                target_nutrition = master_df[master_df["식품명"].str.contains(f_name, na=False, regex=False)]
                 
                 if not target_nutrition.empty:
                     # 가장 유사한 첫 번째 데이터의 영양성분 가져오기
