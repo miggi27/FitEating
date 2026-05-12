@@ -7,18 +7,29 @@ import { Activity, Zap, MessageSquare, TrendingUp, ArrowRight } from 'lucide-rea
 const Dashboard = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = useState({ total: { kcal: 0, carbs: 0, protein: 0, fat: 0 }, logs: [] });
-  const [theme, setTheme] = useState('dark'); 
+  // ✨ 운동 데이터를 위한 상태 추가
+  const [workoutStats, setWorkoutStats] = useState({ workout_time: 0, burned_calories: 0, total_volume: 0 });
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
-    const fetchSummary = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/diet/daily-summary`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        if (res.data) setSummary(res.data);
-      } catch (err) { console.error("데이터 로드 실패"); }
+        const token = localStorage.getItem('token');
+        const headers = { Authorization: `Bearer ${token}` };
+
+        // 1. 식단 데이터
+        const dietRes = await axios.get(`${API_BASE_URL}/diet/daily-summary`, { headers });
+        if (dietRes.data) setSummary(dietRes.data);
+
+        // 2. ✨ 운동 데이터 가져오기 추가
+        const workoutRes = await axios.get(`${API_BASE_URL}/routine/dashboard-stats`, { headers });
+        if (workoutRes.data) setWorkoutStats(workoutRes.data);
+
+      } catch (err) {
+        console.error("데이터 로드 실패");
+      }
     };
-    fetchSummary();
+    fetchData();
   }, []);
 
   return (
@@ -86,15 +97,21 @@ const Dashboard = () => {
               <div className="absolute bottom-6 right-6 left-6 p-6 bg-black/40 backdrop-blur-2xl rounded-[2rem] border border-white/10 grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Workout Time</p>
-                  <p className="text-lg font-black italic text-blue-400">84<span className="text-[10px] ml-1">m</span></p>
+                  <p className="text-lg font-black italic text-blue-400">
+                    {workoutStats.workout_time}<span className="text-[10px] ml-1">m</span>
+                  </p>
                 </div>
                 <div className="text-center border-x border-white/10">
-                  <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Avg Heartrate</p>
-                  <p className="text-lg font-black italic text-red-500">142<span className="text-[10px] ml-1">bpm</span></p>
+                  <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Total Volume</p>
+                  <p className="text-lg font-black italic text-red-500">
+                    {workoutStats.total_volume}<span className="text-[10px] ml-1">kg</span>
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Est. Burn</p>
-                  <p className="text-lg font-black italic text-yellow-500">620<span className="text-[10px] ml-1">cal</span></p>
+                  <p className="text-lg font-black italic text-yellow-500">
+                    {workoutStats.burned_calories}<span className="text-[10px] ml-1">cal</span>
+                  </p>
                 </div>
               </div>
             </div>

@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import TopNavbar from "./components/TopNavbar";
 import Navbar from "./components/Navbar";
-import ExerciseSelectPage from "./pages/ExerciseSelectPage";
-import ExercisePage from "./pages/ExercisePage";
 import DietPage from "./pages/DietPage";
 import BlogPage from "./pages/BlogPage";
 import Settings from "./pages/Settings";
@@ -12,9 +10,12 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
-
 import DesignMain from "./pages/designa/DesignMain";
 import DietAddPage from './pages/DietAddPage';
+// src/App.jsx 상단 import 부분 수정
+import RoutinePlaySelectPage from "./pages/RoutinePlaySelectPage"; // (기존 ExerciseSelectPage)
+import RoutinePlayPage from "./pages/RoutinePlayPage";             // (기존 ExercisePage)
+import RoutinePlanPage from "./pages/RoutinePlanPage";             // (신규 추가!)
 
 const themeStyles = {
   dark: {
@@ -36,7 +37,7 @@ const AppContent = () => {
   return (
     <Routes>
       {/* 1. 디자인 모드 (기존 유지) */}
-      <Route path="/designa/*" element={<DesignMain />} />
+      {/* <Route path="/designa/*" element={<DesignMain />} /> */}
 
       {/* 2. 로그인/회원가입 (내비바 없는 깨끗한 화면) */}
       <Route path="/login" element={<Login />} />
@@ -52,11 +53,14 @@ const AppContent = () => {
             <main className="flex-1 relative overflow-hidden flex justify-center">
               <Routes>
                 <Route path="/" element={<Navigate to="/Dashboard" replace />} />
-                <Route path="/Exercise" element={<ExerciseSelectPage theme={theme} />} />
-                {/* <Route path="/exercise" element={<ExercisePage theme={theme} />} /> */}
-                <Route path="/exercise/:exId" element={<ExercisePage theme={theme} />} />
-                {/* <Route path="/exercise/:exId/ANALYSIS" element={<ExercisePage theme={theme} />} /> */}
-                {/* <Route path="/exercise/:exId/:mode" element={<ExercisePage theme={theme} />} /> */}
+                
+                {/* 1. 루틴 계획 (새로운 중량 트래커) */}
+                <Route path="/routine/plan" element={<RoutinePlanPage theme={theme} />} />
+                
+                {/* 2. 루틴 시작 (기존 AI 분석) */}
+                <Route path="/routine/play" element={<RoutinePlaySelectPage theme={theme} />} />
+                <Route path="/routine/play/:exId" element={<RoutinePlayPage theme={theme} />} />
+
                 <Route path="/diet" element={<DietPage theme={theme} />} />
                 <Route path="/diet/add" element={<DietAddPage />} />
                 <Route path="/blog" element={<BlogPage theme={theme} />} />

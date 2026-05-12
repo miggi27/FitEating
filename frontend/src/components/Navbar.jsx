@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Dumbbell, BookText, Utensils, Settings as SettingsIcon } from "lucide-react";
+// 아이콘 추가: ClipboardList(계획), PlayCircle(실행)
+import { ClipboardList, PlayCircle, BookText, Utensils, Settings as SettingsIcon } from "lucide-react";
 
 const Navbar = ({ s }) => {
   const location = useLocation();
@@ -20,7 +21,13 @@ const Navbar = ({ s }) => {
   return (
     <nav className={`h-20 ${s.nav} border-t ${s.border} flex items-center justify-around px-4 z-[100] shadow-lg`}>
       <NavButton to="/blog" icon={<BookText size={22} />} label="Blog" />
-      <NavButton to="/Exercise" icon={<Dumbbell size={22} />} label="Workout" />
+      
+      {/* 1. 루틴 계획 (새로 추가될 중량/세트 관리 페이지) */}
+      <NavButton to="/routine/plan" icon={<ClipboardList size={22} />} label="Routine Plan" />
+      
+      {/* 2. 루틴 시작 (기존 AI 카메라 분석 페이지) */}
+      <NavButton to="/routine/play" icon={<PlayCircle size={22} />} label="Routine Play" />
+      
       <NavButton to="/diet" icon={<Utensils size={22} />} label="Diet" />
       <NavButton to="/settings" icon={<SettingsIcon size={22} />} label="Set" />
     </nav>

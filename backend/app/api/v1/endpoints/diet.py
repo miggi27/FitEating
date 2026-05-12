@@ -10,7 +10,8 @@ import uuid  # 파일명 중복 방지를 위해 상단에 추가
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from datetime import date
-
+from datetime import datetime
+from sqlalchemy import func
 from app.database import get_db 
 from app.api.v1.endpoints.auth import get_current_user
 from app.models.user import User
@@ -376,3 +377,18 @@ def search_nutrition_api(name: str):
     
     # 검색 결과 없을 때 기본값
     return {"food_name": name, "kcal": 0, "carbs": 0, "protein": 0, "fat": 0}
+
+@router.get("/today-summary")
+def get_today_diet_summary(db: Session = Depends(get_db)):
+    today = datetime.now().date()
+    # 오늘 기록된 모든 식단의 칼로리와 단백질 합산
+    # (실제 테이블 구조에 맞춰 쿼리 작성)
+    summary = db.query(
+        func.sum(DietLog.calories).label("total_cal"),
+        func.sum(DietLog.protein).label("total_protein")
+    ).filter(func.date(DietLog.created_at) == today).first()
+    
+    return {
+        "calories": summary.total_cal or 0,
+        "protein": summary.total_protein or 0
+    }

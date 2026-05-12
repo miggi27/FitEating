@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ExerciseAnalyzer from "../features/exercise/ExerciseAnalyzer";
-import FeedbackDetail from "./FeedbackDetail";
+import FeedbackDetail from "./RoutineLogPage";
 import { ChevronLeft, Upload, Activity } from "lucide-react";
 
 const ExercisePage = ({ theme }) => {
