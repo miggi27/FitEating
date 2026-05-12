@@ -1,4 +1,3 @@
-
 📂 FitEating 프로젝트 구조
 # 아래와 같은 파일구조로 시작
 backend/
