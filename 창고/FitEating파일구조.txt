@@ -1,6 +1,4 @@
-
-📂 FitEating 프로젝트 구조
-# 아래와 같은 파일구조로 시작
+📂 FitEating 프로젝트 구조 (fastapi+react)
 backend/
 ├── venv/                 # 가상환경
 ├── app/
