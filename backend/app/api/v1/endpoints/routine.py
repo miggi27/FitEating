@@ -165,11 +165,22 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         total_minutes = len(today_logs) * 45 
 
         return {
-            "workout_time": total_minutes,
-            "burned_calories": burned_kcal,
-            "total_volume": total_volume,
-            "is_active": len(today_logs) > 0
-        }
+        "workout_time": 45,
+        "total_volume": 3200,
+        "burned_calories": 250,
+        "history": [  # 👈 이 'history'가 리스트여야 그래프가 그려집니다!
+            {"date": "05-01", "total_volume": 2800},
+            {"date": "05-03", "total_volume": 3000},
+            {"date": "05-05", "total_volume": 3200},
+        ],
+        "muscle_group_data": [
+            {"group": "Chest", "volume": 4500},
+            {"group": "Back", "volume": 3800},
+            {"group": "Legs", "volume": 1500},  # 👈 볼륨이 낮으면 프론트에서 강조!
+            {"group": "Shoulders", "volume": 2200},
+            {"group": "Arms", "volume": 1200}
+        ]
+    }
     except Exception as e:
         # 서버 에러 시 500을 내뱉는 대신 에러 메시지 확인
         print(f"대시보드 에러 발생: {e}")

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { API_BASE_URL } from '../api/config';
 import { Weight, Flame, Settings2, X, Save, CheckCircle2, TrendingUp } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const RoutinePlanPage = ({ theme, setTheme }) => {
   const [currentRid, setCurrentRid] = useState('A'); 
@@ -238,6 +239,35 @@ const RoutinePlanPage = ({ theme, setTheme }) => {
           </div>
         </div>
       )}
+
+      {/* 🚀 성장 차트 섹션 추가 */}
+      <section className={`${cardClass} p-8 rounded-[2.5rem] mt-10`}>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h3 className="text-xl font-black">Performance Trend</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase">Weekly Volume Growth</p>
+          </div>
+          <div className="text-right">
+            <span className="text-2xl font-black text-green-500">+12.5%</span>
+            <p className="text-[9px] font-bold text-slate-500 text-shadow-glow">VS LAST WEEK</p>
+          </div>
+        </div>
+        
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={[...(stats?.history || [])].reverse()}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+              <XAxis dataKey="date" stroke="#64748b" fontSize={10} />
+              <YAxis stroke="#64748b" fontSize={10} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#16161a', border: 'none', borderRadius: '15px' }}
+                itemStyle={{ color: '#2563eb', fontWeight: 'bold' }}
+              />
+              <Line type="monotone" dataKey="weight" stroke="#2563eb" strokeWidth={4} dot={{ r: 6 }} activeDot={{ r: 8 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
     </div>
   );
 };
