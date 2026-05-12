@@ -1,4 +1,5 @@
 # backend/app/main.py
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqladmin import Admin, ModelView
@@ -18,6 +19,17 @@ app = FastAPI()
 
 # 테이블 생성 (이 한 줄이 모든 모델의 테이블을 test.db에 만듭니다)
 Base.metadata.create_all(bind=engine)
+
+# 1. 현재 main.py 파일의 위치를 기준으로 경로 설정
+# main.py가 backend/app/main.py에 있다면:
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # backend/app
+STATIC_DIR = os.path.join(CURRENT_DIR, "static")
+
+# 2. 경로가 실제로 존재하는지 확인 (디버깅용)
+if not os.path.exists(STATIC_DIR):
+    print(f"❌ 설정된 경로에 폴더가 없습니다: {STATIC_DIR}")
+else:
+    print(f"✅ 정적 파일 경로 연결됨: {STATIC_DIR}")
 
 # 2. 허용할 Origin(프론트엔드 주소) 목록 작성
 origins = [
@@ -70,7 +82,7 @@ admin.add_view(WorkoutLogAdmin)
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(exercise.router, prefix="/api/v1/exercise", tags=["exercise"])
 app.include_router(diet.router, prefix="/api/v1/diet", tags=["diet"])
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 def read_root():
