@@ -10,7 +10,7 @@ backend/
 │   │           ├── auth.py  # 사용자 인증(Authentication) 및 인가(Authorization) 처리
 │   │           ├── exercise.py  # Mediapipe 관련 로직용
 │   │           ├── diet.py      # 식단 관련 로직용
-│   │           └── auth.py      # 🟢 [추가] 로그인/회원가입 API 로직
+│   │           └── auth.py      # 로그인/회원가입 API 로직
 │   ├── core/             # 설정 (DB 주소 등)
 │   │   ├── constants.py   # 전역 상수 및 피드백 메시지 관리
 │   │   └── security.py   # 토큰 관리, 비밀번호 해싱
@@ -34,39 +34,44 @@ backend/
 
 frontend/
 ├── node_modules/       # 설치된 라이브러리들 (자동 생성)
-├── public/             # 소리 파일(.mp3), 가이드 영상 등 정적 파일
-│   ├── images/         # 
-│   ├── sounds/         # correct.mp3 등 알림음(현재사용안함)
-│   └── video/          # 
+├── public/             # 
+│   └── resources/      # 현재 미사용
 ├── src/                # 실제 개발 소스 코드
 │   ├── api/            # 
 │   │   └── config.js   # 백엔드 경로 저장
-│   ├── assets/         # 로고 등 이미지 저장폴더
+│   ├── assets/         # 이미지 저장폴더
+│   │   └── guide_images/    # 운동자세이미지
 │   ├── components/     # 공용 UI (Layout.jsx, Navbar.jsx, TopNavbar.jsx 등)
+│   │   └── constants/       # 운동자세이미지
+│   │       └── exercise.ts  # 전역 상수 및 피드백 메시지 관리
 │   ├── context/        # 로그인 관리 파일
+│   │   └── AuthContext.jsx      # 토큰 관리
 │   ├── features/       # 핵심 기능 (여기에 ExerciseAnalyzer 등이 들어감)
 │   │   ├── exercise/   # 운동 관련
 │   │   │   └── ExerciseAnalyzer.jsx # 운동 분석 코드 분리
 │   │   ├── diet/       # 식단 관련 - 현재 없음
 │   │   └── blog/       # 블로그 관련 - 현재 없음
 │   ├── pages/
-│   │   ├── Analysis.jsx     # 분석 페이지 (블로그를 대신할수도 있으나 Dashboard에 분석을 넣을 수도)
-│   │   ├── BlogPage.jsx     # 블로그 페이지 
-│   │   ├── Dashboard.jsx    # 왼쪽 맨위 FIT-EATING을 누르면 보여지는 것(오늘 운동 음식 상태)
-│   │   ├── DietAddPage.jsx  # 음식 분석 페이지
-│   │   ├── DietPage.jsx     # 음식 페이지
-│   │   ├── ExercisePage.jsx # 운동 페이지
-│   │   ├── FeedbackDetail.jsx # 운동분석 상세페이지
-│   │   ├── FoodCalculator.jsx # DietAddPage 페이지가 대신하므로 삭제 필요
-│   │   ├── Home.jsx           # 삭제 필요
-│   │   ├── Login.jsx          # 
-│   │   ├── Signup.jsx         # 
-│   │   └── Settings.jsx       # 설정 페이지
-│   ├── designa/                  # 🟢 디자인 담당자 작업 구역
-│   │   ├── DesignLayout.jsx      # 디자인 모드 전용 배경/네비 틀
-│   │   ├── DesignExercise.jsx    # 디자인 모드용 운동 페이지
-│   │   ├── DesignDiet.jsx        # 디자인 모드용 식단 페이지
-│   │   └── DesignMain.jsx        # 디자인 모드 시작점 (Entry)
+│   │   ├── designa/                  # 🟢 디자인 담당자 작업 구역
+│   │   │   ├── DesignLayout.jsx      # 디자인 모드 전용 배경/네비 틀
+│   │   │   ├── DesignExercise.jsx    # 디자인 모드용 운동 페이지
+│   │   │   ├── DesignDiet.jsx        # 디자인 모드용 식단 페이지
+│   │   │   └── DesignMain.jsx        # 디자인 모드 시작점 (Entry)
+│   │   ├── BlogPage.jsx        # 블로그 페이지 
+│   │   ├── Dashboard.jsx       # 왼쪽 맨위 FIT-EATING을 누르면 보여지는 것(오늘 운동 음식 상태)
+│   │   ├── DietAddPage.jsx     # 음식 분석 페이지
+│   │   ├── DietPage.jsx        # 음식 페이지
+│   │   ├── FoodCalculator.jsx  # DietAddPage 페이지가 대신하므로 삭제 필요
+│   │   ├── Login.jsx           # 로그인 페이지
+│   │   ├── RoutineLogPage.jsx  # 운동 피드백 페이지
+│   │   ├── RoutinePlanPage.jsx # 운동 루틴 페이지
+│   │   ├── RoutinePlayPage.jsx # 운동자세교정 페이지
+│   │   ├── RoutinePlaySelectPage.jsx  # 운동 선택 페이지
+│   │   ├── FoodCalculator.jsx  # DietAddPage 페이지가 대신하므로 삭제 필요
+│   │   ├── Settings.jsx        # 설정 페이지
+│   │   ├── Signup.jsx          # 회원가입 페이지
+│   │   ├── StandardPageTemplate.jsx    # 각페이지 기본 템플릿 (그냥 백업용)
+│   │   └── StatsPage.jsx       # 
 │   ├── App.jsx         # 메인 라우팅 설정
 │   └── main.jsx        # 리액트 시작점
 ├── .gitignore          # 깃 제외 목록
