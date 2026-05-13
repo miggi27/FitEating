@@ -1,0 +1,1392 @@
+{
+  "user": {
+    "unit": "kg",
+    "active_routine": "nsuns_4day",
+    "current_day_index": 1
+  },
+  "one_rep_max": {
+    "squat": 10.0,
+    "bench": 5.0,
+    "deadlift": 0.0,
+    "ohp": 7.5,
+    "row": 2.5
+  },
+  "training_max": {
+    "squat": 20.0,
+    "bench": 22.5,
+    "ohp": 20.0,
+    "row": 20.0
+  },
+  "working_weights": {
+    "squat": 30.0,
+    "bench": 25.0,
+    "deadlift": 30.0,
+    "ohp": 25.0,
+    "row": 25.0
+  },
+  "consecutive_fails": {
+    "squat": 0,
+    "bench": 0,
+    "deadlift": 0,
+    "ohp": 0,
+    "row": 0
+  },
+  "sessions": [
+    {
+      "date": "2026-05-12 14:06",
+      "routine_id": "stronglifts_5x5",
+      "day_idx": 0,
+      "day_id": "A",
+      "day_name_ko": "Workout A",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "bench",
+          "lift_name_ko": "벤치프레스",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "row",
+          "lift_name_ko": "바벨 로우",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 0,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 0,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 0,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 0,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 0,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:09",
+      "routine_id": "stronglifts_5x5",
+      "day_idx": 0,
+      "day_id": "A",
+      "day_name_ko": "Workout A",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "bench",
+          "lift_name_ko": "벤치프레스",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "row",
+          "lift_name_ko": "바벨 로우",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:09",
+      "routine_id": "stronglifts_5x5",
+      "day_idx": 1,
+      "day_id": "B",
+      "day_name_ko": "Workout B",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 22.5,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "ohp",
+          "lift_name_ko": "오버헤드 프레스",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "deadlift",
+          "lift_name_ko": "데드리프트",
+          "tier": null,
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:09",
+      "routine_id": "stronglifts_5x5",
+      "day_idx": 0,
+      "day_id": "A",
+      "day_name_ko": "Workout A",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 25.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "bench",
+          "lift_name_ko": "벤치프레스",
+          "tier": null,
+          "base_weight": 22.5,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "row",
+          "lift_name_ko": "바벨 로우",
+          "tier": null,
+          "base_weight": 22.5,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:10",
+      "routine_id": "stronglifts_5x5",
+      "day_idx": 1,
+      "day_id": "B",
+      "day_name_ko": "Workout B",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 27.5,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 27.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 27.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 27.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 27.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 27.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "ohp",
+          "lift_name_ko": "오버헤드 프레스",
+          "tier": null,
+          "base_weight": 22.5,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "deadlift",
+          "lift_name_ko": "데드리프트",
+          "tier": null,
+          "base_weight": 25.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:10",
+      "routine_id": "madcow_5x5",
+      "day_idx": 0,
+      "day_id": "1",
+      "day_name_ko": "Day 1 (월, 볼륨)",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 30.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.625,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 0.875,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 30.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "bench",
+          "lift_name_ko": "벤치프레스",
+          "tier": null,
+          "base_weight": 25.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 12.5,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.625,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 0.875,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "row",
+          "lift_name_ko": "바벨 로우",
+          "tier": null,
+          "base_weight": 25.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 12.5,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.625,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 0.875,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:10",
+      "routine_id": "madcow_5x5",
+      "day_idx": 1,
+      "day_id": "2",
+      "day_name_ko": "Day 2 (수, 가벼움)",
+      "lifts": [
+        {
+          "lift_id": "squat",
+          "lift_name_ko": "스쿼트",
+          "tier": null,
+          "base_weight": 30.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 17.5,
+              "weight_pct": 0.6,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.7,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 0.8,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "ohp",
+          "lift_name_ko": "오버헤드 프레스",
+          "tier": null,
+          "base_weight": 25.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 12.5,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.625,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 22.5,
+              "weight_pct": 0.875,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 1.0,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "deadlift",
+          "lift_name_ko": "데드리프트",
+          "tier": null,
+          "base_weight": 30.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 17.5,
+              "weight_pct": 0.6,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 20.0,
+              "weight_pct": 0.7,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 25.0,
+              "weight_pct": 0.8,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-05-12 14:11",
+      "routine_id": "nsuns_4day",
+      "day_idx": 0,
+      "day_id": "1",
+      "day_name_ko": "Day 1 (벤치 + OHP)",
+      "lifts": [
+        {
+          "lift_id": "bench",
+          "lift_name_ko": "벤치프레스",
+          "tier": "T1",
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 3,
+              "actual_reps": 3,
+              "weight": 17.5,
+              "weight_pct": 0.85,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 1,
+              "actual_reps": 1,
+              "weight": 20.0,
+              "weight_pct": 0.95,
+              "is_amrap": true,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 3,
+              "actual_reps": 3,
+              "weight": 17.5,
+              "weight_pct": 0.9,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 3,
+              "actual_reps": 3,
+              "weight": 17.5,
+              "weight_pct": 0.85,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 5,
+              "target_reps": 3,
+              "actual_reps": 3,
+              "weight": 15.0,
+              "weight_pct": 0.8,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 6,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.75,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 7,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 15.0,
+              "weight_pct": 0.7,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 8,
+              "target_reps": 5,
+              "actual_reps": 5,
+              "weight": 12.5,
+              "weight_pct": 0.65,
+              "is_amrap": true,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        },
+        {
+          "lift_id": "ohp",
+          "lift_name_ko": "오버헤드 프레스",
+          "tier": "T2",
+          "base_weight": 20.0,
+          "sets": [
+            {
+              "set_idx": 0,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 10.0,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 1,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 12.5,
+              "weight_pct": 0.6,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 2,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 15.0,
+              "weight_pct": 0.7,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 3,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 12.5,
+              "weight_pct": 0.6,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 4,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 10.0,
+              "weight_pct": 0.5,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            },
+            {
+              "set_idx": 5,
+              "target_reps": 6,
+              "actual_reps": 6,
+              "weight": 7.5,
+              "weight_pct": 0.4,
+              "is_amrap": false,
+              "is_pr_set": false,
+              "is_backoff": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
