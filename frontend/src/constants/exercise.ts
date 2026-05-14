@@ -86,7 +86,7 @@ export const FEEDBACK_MESSAGES = {
     "legraise_excessive_knee_flex": "무릎을 너무 굽혔습니다. 무릎을 거의 펴거나 살짝만 굽힌 채로 다리를 들어올리세요.",
 }
 
-export const ERROR_KEYS = list(FEEDBACK_MESSAGES.keys())
+// export const ERROR_KEYS = list(FEEDBACK_MESSAGES.keys())
 
 // 4. 추천 자세 이미지 매핑
 export const GUIDE_IMAGES = {

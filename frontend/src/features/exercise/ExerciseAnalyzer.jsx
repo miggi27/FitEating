@@ -55,19 +55,20 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
       const landmarks = results.poseLandmarks.flatMap((l) => [l.x, l.y, l.z, l.visibility]);
       try {
         const res = await axios.post(`${API_BASE_URL}/exercise/analyze`, { landmarks, exercise_type: exercise });
-        const data = res.data; // 이제 res가 정의되었으므로 에러 안 남!
-        // latestData.current = data;
-        // if (data.error_key && data.feedback_points) {
-        //   // 캡처용 사진 생성
-        //   data.capture_url = canvas.toDataURL("image/jpeg", 0.7);
-        //   // 서버에서 새로운 에러를 받으면 Ref 갱신
-        //   feedbackRef.current = { points: data.feedback_points, msg: data.overlay_message };
-        // } else {
-        //   feedbackRef.current = null;
-        // }
+        const data = res.data;
 
-        // 💡 [핵심 반영] 성능 저하 없이 '확인용 사진' 한 장만 찍어둠
-        // 횟수가 1회 이상이 되거나 영상이 어느 정도 진행되었을 때 딱 한 번만 캡처
+        // 🔥 추가: 서버에서 온 피드백 데이터를 Ref에 저장
+        // 서버 응답 데이터 구조가 { feedback: { points: [...], msg: "..." } } 식이라고 가정
+        // 🔥 백엔드의 'feedback_points'를 프론트엔드의 'feedbackRef'에 연결
+        if (data.feedback_points && data.feedback_points.length > 0) {
+          feedbackRef.current = {
+            points: data.feedback_points,
+            msg: data.overlay_message || "자세 주의!"
+          };
+        } else {
+          feedbackRef.current = null; // 에러 없으면 지우기
+        }
+
         if (!workoutImage.current && (data.counter > 0 || videoRef.current.currentTime > 2)) {
           workoutImage.current = canvas.toDataURL("image/jpeg", 0.4); // 용량 최소화 (0.4)
         }
@@ -114,18 +115,27 @@ const ExerciseAnalyzer = forwardRef(({ exercise, onResultUpdate, onAnalysisCompl
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-black">
-      <canvas ref={canvasRef} className="max-w-full max-h-full object-contain" />
-      <video 
-        ref={videoRef} 
-        onPlay={onFrame} 
-        onEnded={handleFinalize} // 💡 수정된 핸들러
-        className="hidden" 
-        muted 
-        playsInline 
-      />
-    </div>
-  );
+  <div className="w-full h-full flex items-center justify-center bg-black overflow-hidden">
+    <canvas 
+      ref={canvasRef} 
+      // object-cover 대신 아래 스타일 적용
+      className="h-full w-auto object-contain" 
+      style={{ 
+        maxHeight: '100%', 
+        maxWidth: '100%',
+        margin: '0 auto' // 가로 중앙 정렬
+      }}
+    />
+    <video 
+      ref={videoRef} 
+      onPlay={onFrame} 
+      onEnded={handleFinalize} 
+      className="hidden" 
+      muted 
+      playsInline 
+    />
+  </div>
+);
 });
 
 export default ExerciseAnalyzer;

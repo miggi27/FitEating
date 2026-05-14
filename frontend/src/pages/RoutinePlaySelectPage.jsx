@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, ChevronRight, Info, Moon, Sun, Palette } from 'lucide-react';
-
+import { CAMERA_GUIDE, EXERCISE_CATEGORIES } from '../constants/exercise';
 
 const ExerciseSelectPage = ({ theme, setTheme }) => {
   const navigate = useNavigate();
@@ -10,26 +10,9 @@ const ExerciseSelectPage = ({ theme, setTheme }) => {
     // 💡 여기서 주소를 정확히 쏴줘야 Navbar가 읽습니다.
     navigate(`/exercise/${exId}`);
   };
-  
-  // 1. 부위별 데이터 (Streamlit_Upload4 로직 기반)
-  const categories = {
-    "가슴": ["벤치프레스", "인클라인 벤치프레스", "머신플라이"],
-    "등": ["바벨 로우", "데드리프트", "랫풀다운"],
-    "하체": ["스쿼트", "런지", "스모 데드리프트"],
-    "어깨": ["오버헤드 프레스", "사이드 레터럴 레이즈", "프론트 레이즈"],
-    "복근": ["플랭크", "크런치", "레그 레이즈"],
-  };
-
-  // 2. 가이드 데이터 (기존의 상세한 피드백 문구 유지)
-  const exerciseDetails = {
-    "스쿼트": { guide: "측면에서 촬영하세요. 무릎·허리 라인이 한눈에 보이게 옆에서 찍어야 무릎 안쪽 꺾임과 척추 각도를 판정할 수 있습니다.", img: "/assets/guides/squat.jpg" },
-    "벤치프레스": { guide: "정면에서 촬영하세요. 카메라를 발 아래쪽에 두고 바가 정면으로 보이도록 배치하면 그립 너비와 허리 아치를 판정하기 좋습니다.", img: "/assets/guides/bench.jpg" },
-    "바벨 로우": { guide: "측면에서 촬영하세요. 어깨-골반-무릎이 한 라인에 보여야 척추 중립과 힙 힌지 각도를 판정할 수 있습니다.", img: "/assets/guides/row.jpg" },
-    // ... 나머지 18종 운동 상세 데이터
-  };
 
   const [selectedCat, setSelectedCat] = useState("가슴");
-  const [selectedEx, setSelectedEx] = useState(categories["가슴"][0]);
+  const [selectedEx, setSelectedEx] = useState(EXERCISE_CATEGORIES["가슴"][0]);
 
   // 테마에 따른 배경색 설정 (DietPage와 동일한 폭 및 색감)
   const isDark = theme === 'dark' || theme === 'design';
@@ -39,9 +22,6 @@ const ExerciseSelectPage = ({ theme, setTheme }) => {
 
   const getGuideImage = (exerciseName) => {
     try {
-      // 💡 assets 폴더 내의 이미지를 동적으로 가져옴
-      // return require(`../assets/guide_images/${exerciseName}.png`);
-      // 만약 Vite를 사용 중이라면 아래 방식을 권장합니다:
       return new URL(`../assets/guide_images/${exerciseName}.png`, import.meta.url).href;
     } catch (err) {
       return "/assets/default_guide.png"; // 이미지 없을 때 기본값
@@ -69,10 +49,10 @@ const ExerciseSelectPage = ({ theme, setTheme }) => {
           <section className={`${cardClass} rounded-[3rem] p-10 relative overflow-hidden`}>
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Select Target Body Part</p>
             <div className="flex flex-wrap gap-3">
-              {Object.keys(categories).map(cat => (
+              {Object.keys(EXERCISE_CATEGORIES).map(cat => (
                 <button
                   key={cat}
-                  onClick={() => { setSelectedCat(cat); setSelectedEx(categories[cat][0]); }}
+                  onClick={() => { setSelectedCat(cat); setSelectedEx(EXERCISE_CATEGORIES[cat][0]); }}
                   className={`px-8 py-3 rounded-full font-black text-sm transition-all ${selectedCat === cat ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
                 >
                   {cat}
@@ -91,7 +71,7 @@ const ExerciseSelectPage = ({ theme, setTheme }) => {
                 <div className="h-[1px] flex-1 bg-white/5"></div>
               </div>
               <div className="grid gap-4">
-                {categories[selectedCat].map(ex => (
+                {EXERCISE_CATEGORIES[selectedCat].map(ex => (
                   <button
                     key={ex}
                     onClick={() => setSelectedEx(ex)}
@@ -125,14 +105,14 @@ const ExerciseSelectPage = ({ theme, setTheme }) => {
                 <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/5">
                   <Info className="text-blue-500 shrink-0" size={20} />
                   <p className="text-sm leading-relaxed text-slate-400 font-medium">
-                    {exerciseDetails[selectedEx]?.guide || "상세 가이드를 준비 중입니다."}
+                    {CAMERA_GUIDE[selectedEx] || "상세 가이드를 준비 중입니다."}
                   </p>
                 </div>
 
                 {/* 분석 시작 버튼 */}
                 <button 
                   // onClick={() => navigate(`/exercise/analysis?type=${selectedEx}`)}
-                  onClick={() => navigate(`/exercise/${selectedEx}`)}
+                  onClick={() => navigate(`/routine/${selectedEx}`)}
                   className="w-full py-6 rounded-2xl bg-blue-600 text-white hover:bg-blue-500 shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3 font-black uppercase text-sm tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <Play size={20} fill="currentColor" />

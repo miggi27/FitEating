@@ -59,7 +59,7 @@ const AppContent = () => {
                 
                 {/* 2. 루틴 시작 (기존 AI 분석) */}
                 <Route path="/routine/play" element={<RoutinePlaySelectPage theme={theme} />} />
-                <Route path="/routine/play/:exId" element={<RoutinePlayPage theme={theme} />} />
+                <Route path="/routine/:exId" element={<RoutinePlayPage theme={theme} />} />
 
                 <Route path="/diet" element={<DietPage theme={theme} />} />
                 <Route path="/diet/add" element={<DietAddPage />} />

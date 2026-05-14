@@ -151,7 +151,7 @@ async def analyze_exercise(data: ExerciseData):
         feedback_points = [] # 프론트엔드에 전달할 좌표 리스트
 
         # 예시: 무릎 꺾임 에러 발생 시
-        if angle < 130 and abs(knee[0] - ankle[0]) > 0.05:
+        if angle < 130 and abs(knee[0] - ankle[0]) > 0.06:
             current_error = "caved_in_knees"
             error_counts[current_error] = error_counts.get(current_error, 0) + 1
             
@@ -163,6 +163,15 @@ async def analyze_exercise(data: ExerciseData):
                     "x": landmarks[idx * 4],
                     "y": landmarks[idx * 4 + 1]
                 })
+
+        # 예시: 벤치프레스 시 팔이 너무 넓게 벌어지는 경우 추가 (백엔드)
+        if data.exercise_type == "벤치프레스":
+            # 팔꿈치와 어깨 좌표 추출 후 거리 계산 로직...
+            if distance > 0.8: # 너무 넓다면
+                current_error = "arms_spread"
+                indices = ERROR_BODY_PARTS.get("arms_spread", [])
+                for idx in indices:
+                    feedback_points.append({"x": landmarks[idx*4], "y": landmarks[idx*4+1]})
 
         # 관대한 점수 (최하 65점 보장)
         penalty = (len(error_counts) * 5) + ( (sum(error_counts.values())/total_frames)*30 if total_frames > 0 else 0 )

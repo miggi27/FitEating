@@ -28,18 +28,25 @@ const ExercisePage = ({ theme }) => {
     <div className={`fixed inset-0 ${isDark ? "bg-[#0c0c0e]" : "bg-slate-50"} text-white flex flex-col`}>
       
       {/* 🟢 DietPage와 100% 일치하는 헤더 폭 (max-w-6xl) */}
-      <header className={`w-full max-w-6xl mx-auto flex justify-between items-center p-6 border-b ${isDark ? 'border-white/5 bg-[#0c0c0e]/80' : 'border-slate-200 bg-white/80'} backdrop-blur-md z-[100] sticky top-0`}>
+      {/* <header className={`w-full max-w-6xl mx-auto flex justify-between items-center p-6 border-b ${isDark ? 'border-white/5 bg-[#0c0c0e]/80' : 'border-slate-200 bg-white/80'} backdrop-blur-md z-[100] sticky top-0`}>
         <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
           <ChevronLeft size={24} className={isDark ? "text-white" : "text-black"} />
         </button>
         <h2 className="text-[10px] font-black text-blue-500 italic uppercase tracking-[0.3em]">{exId} Analysis</h2>
         <div className="w-10"></div>
+      </header> */}
+      <header className={`w-full h-[50px] max-w-6xl mx-auto flex justify-between items-center px-6 border-b ${isDark ? 'border-white/5 bg-[#0c0c0e]' : 'border-slate-200 bg-white'} z-[100]`}>
+        <button onClick={() => navigate(-1)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+          <ChevronLeft size={20} className={isDark ? "text-white" : "text-black"} />
+        </button>
+        <h2 className="text-[10px] font-black text-blue-500 italic uppercase tracking-[0.3em]">{exId} Analysis</h2>
+        <div className="w-8"></div>
       </header>
 
       {/* 🟢 메인 컨텐츠 영역: DietPage와 폭 일치 */}
-      <main className="flex-1 w-full max-w-6xl mx-auto relative overflow-hidden flex flex-col">
+      <main className="w-full max-w-6xl mx-auto relative overflow-hidden" style={{ height: 'calc(100vh - 150px)' }}>
         {!finalData ? (
-          <div className="flex-1 relative bg-black rounded-t-[3rem] overflow-hidden shadow-2xl">
+          <div className="w-full h-full relative bg-black overflow-hidden">
             {/* 1. 분석기 컴포넌트 (ref로 파일 핸들링 연결) */}
             <ExerciseAnalyzer 
               ref={analyzerRef}
@@ -50,7 +57,7 @@ const ExercisePage = ({ theme }) => {
 
             {/* 2. 업로드 전 가이드 (스마트폰 가림 현상 해결) */}
             {!isStarted && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
                 <div className="text-center px-6">
                   <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/30">
                     <Upload size={32} className="text-blue-500" />
@@ -78,7 +85,7 @@ const ExercisePage = ({ theme }) => {
 
             {/* 3. 실시간 분석 UI (영상 위 오버레이) */}
             {isStarted && (
-              <div className="absolute bottom-12 left-12 right-12 z-40 pointer-events-none flex justify-between items-end">
+              <div className="absolute bottom-8 left-8 right-8 z-40 pointer-events-none flex justify-between items-end">
                 <div className="flex flex-col">
                   <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest mb-2">Count</span>
                   <span className="text-5xl font-black text-white italic leading-none drop-shadow-2xl">
@@ -94,7 +101,7 @@ const ExercisePage = ({ theme }) => {
           </div>
         ) : (
           /* 4. 분석 결과 표시 (무한 로딩 해결 포인트) */
-          <div className="flex-1 overflow-y-auto px-6 py-10">
+          <div className="h-full overflow-y-auto px-6 py-10">
             <FeedbackDetail 
               result={finalData} 
               exerciseName={exId} 
@@ -104,6 +111,7 @@ const ExercisePage = ({ theme }) => {
           </div>
         )}
       </main>
+      <footer className="h-[100px] w-full bg-transparent flex-shrink-0" />
     </div>
   );
 };
