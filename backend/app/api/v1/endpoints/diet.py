@@ -52,7 +52,7 @@ CURRENT_FILE_PATH = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_FILE_PATH))))
 DB_PATH = os.path.join(BASE_DIR, "data", "food_list.csv") # 클래스인덱스
 MODEL_PATH = os.path.join(BASE_DIR, "models", "food", "efficient0-11diet.pt") # 음식인식
-YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "best38.pt") # 음식분류
+YOLO_PATH = os.path.join(BASE_DIR, "models", "food", "best374.pt") # 음식분류
 FOOD_CSV = os.path.join(BASE_DIR, "data", "food_master_음식_utf8.csv") # 칼탄단지 계산용
 PROCESS_CSV = os.path.join(BASE_DIR, "data", "food_master_가공_utf8.csv") # 칼탄단지 계산용
 
